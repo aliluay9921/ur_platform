@@ -17,6 +17,7 @@ class CreateStatusesTable extends Migration
             $table->uuid("id")->primary();
             $table->string("status_ar");
             $table->string("status_en");
+            $table->integer("type")->default(0);
             $table->timestamps();
         });
     }

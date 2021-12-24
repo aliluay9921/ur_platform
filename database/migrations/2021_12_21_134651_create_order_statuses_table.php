@@ -18,8 +18,8 @@ class CreateOrderStatusesTable extends Migration
             $table->uuid("status_id");
             $table->uuid("order_id");
             $table->text("message")->nullable();
-            $table->double("after_operation");
-            $table->double("before_operation");
+            $table->double("after_operation")->default(0);
+            $table->double("before_operation")->default(0);
             $table->integer("type"); // 0 deposit , 1 withdraw , 2 charge_balance 
             $table->timestamps();
         });

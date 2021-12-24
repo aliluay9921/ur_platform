@@ -11,14 +11,23 @@ class OrderStatus extends Model
     use HasFactory, Uuids;
 
     protected $guarded = [];
-    protected $with = ["status"];
-    public function deposit()
+    protected $with = ["status", "relations"];
+    // public function deposit()
+    // {
+    //     return $this->belongsTo(Deposit::class, 'order_id');
+    // }
+    // public function withdraw()
+    // {
+    //     return $this->belongsTo(Withdraw::class, 'order_id');
+    // }
+
+    public function relations()
     {
-        return $this->belongsTo(Deposit::class, 'order_id')->where("type", 0);
-    }
-    public function withdraw()
-    {
-        return $this->belongsTo(Withdraw::class, 'order_id')->where("type", 1);
+        if ($this->type == 0) {
+            return $this->belongsTo(Deposit::class, 'order_id');
+        } elseif ($this->type == 1) {
+            return $this->belongsTo(Withdraw::class, 'order_id');
+        }
     }
     public function status()
     {

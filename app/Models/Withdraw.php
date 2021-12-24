@@ -10,6 +10,8 @@ class Withdraw extends Model
 {
     use HasFactory, Uuids;
     protected $guarded = [];
+    protected $with = ["user"];
+
 
     public function payment_method()
     {

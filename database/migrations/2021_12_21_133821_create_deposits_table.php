@@ -19,6 +19,7 @@ class CreateDepositsTable extends Migration
             $table->string("order_key"); // email or serial number or phone number to payment methods user
             $table->double("value");
             $table->uuid("payment_method_id");
+            $table->string("operation_number");
             $table->timestamps();
         });
     }

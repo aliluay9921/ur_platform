@@ -19,6 +19,8 @@ class CreateWithdrawsTable extends Migration
             $table->string("target"); // email or serial number or phone number to transform money
             $table->double("value");
             $table->uuid("payment_method_id");
+            $table->string("operation_number");
+
             $table->timestamps();
         });
     }

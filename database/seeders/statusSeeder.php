@@ -15,20 +15,29 @@ class statusSeeder extends Seeder
     public function run()
     {
         Status::create([
-            "status_ar" => "انتضار",
-            "status_en" => "pending",
+            "type" => 0,
+            "status_ar" => " بانتظار المراجعة",
+            "status_en" => "waiting review",
         ]);
         Status::create([
-            "status_ar" => "قبول",
-            "status_en" => "accept",
+            "type" => 1,
+            "status_ar" => " تحت المراجعة",
+            "status_en" => "under review",
         ]);
         Status::create([
-            "status_ar" => "رفض",
-            "status_en" => "reject",
+            "type" => 2,
+            "status_ar" => " اكتمل الطلب",
+            "status_en" => "done ",
         ]);
         Status::create([
-            "status_ar" => "مقبول جزئي",
-            "status_en" => "partially acceptable",
+            "type" => 3,
+            "status_ar" => "اكتمل الطلب جزئيا ",
+            "status_en" => "partial done",
+        ]);
+        Status::create([
+            "type" => 4,
+            "status_ar" => "رفض ",
+            "status_en" => "reject ",
         ]);
     }
 }
