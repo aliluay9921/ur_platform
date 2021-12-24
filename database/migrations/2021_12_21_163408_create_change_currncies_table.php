@@ -15,7 +15,7 @@ class CreateChangeCurrnciesTable extends Migration
     {
         Schema::create('change_currncies', function (Blueprint $table) {
             $table->uuid("id")->primary();
-            $table->string("currncy");
+            $table->string("currency");
             $table->double("points");
             $table->timestamps();
         });

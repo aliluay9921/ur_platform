@@ -10,8 +10,7 @@ class Card extends Model
 {
     use HasFactory, Uuids;
     protected $guarded = [];
-
-
+    protected $with = ["join_relations", "join_relations.companies"];
     public function join_relations()
     {
         return $this->hasMany(joinRelations::class, 'card_id');

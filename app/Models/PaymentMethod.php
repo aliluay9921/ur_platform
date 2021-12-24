@@ -10,6 +10,7 @@ class PaymentMethod extends Model
 {
     use HasFactory, Uuids;
     protected $guarded = [];
+    protected $with = ["images", "order_key_type", "join_relations", "join_relations.companies"];
 
 
     public function order_key_type()
@@ -19,5 +20,11 @@ class PaymentMethod extends Model
     public function join_relations()
     {
         return $this->hasMany(joinRelations::class, 'payment_method_id');
+    }
+
+
+    public function images()
+    {
+        return $this->hasMany(Image::class, 'target_id');
     }
 }
