@@ -79,7 +79,6 @@ class AuthController extends Controller
                 'regex:/[0-9]/',      // must contain at least one digit
                 // 'regex:/[@$!%*#?&]/', // must contain a special character
             ],
-            'phone_number' => 'min:10|max:11',
 
         ], [
             'first_name.required' => ' يرجى ادخال الاسم الاؤل  ',
@@ -88,8 +87,6 @@ class AuthController extends Controller
             'email.required' => ' يرجى ادخال البريدالالكتروني ',
             'email.email' => ' يرجى ادخال بريد الكتروني صالح  ',
             'email.unique' => ' البريد الالكتروني مستخدم سابقاً ',
-            'phone_number.min' => 'يجب ادخال رقم هاتف صالح',
-            'phone_number.max' => 'يجب ادخال رقم هاتف صالح',
             'password.required' => 'يرجى ادخال كلمة المرور ',
             'password.min' => ' كلمة المرور يجب انت تكون على الاقل 8 عناصر',
             'password.regex' => '  كلمة المرور ضعيفة يجب ان تحتوي على احرف صغيرة واحرف كبيرة وارقام  ',
