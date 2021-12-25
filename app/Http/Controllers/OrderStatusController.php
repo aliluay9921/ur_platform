@@ -101,22 +101,12 @@ class OrderStatusController extends Controller
                 "before_operation" => $order_status->withdraw->user->points,
                 "after_operation" => $order_status->withdraw->user->points - $order_status->withdraw->value,
             ];
-            $relations = joinRelations::where("payment_method_id", $order_status->withdraw->payment_method_id)->first();
-            $companies = Company::find($relations->company_id);
-            $currency =  ChangeCurrncy::where("currency", $companies->currncy_type)->first();
-            // return $order_status;
-            $currency_change = $order_status->withdraw->value / $currency->points;
-            $tax_value = $order_status->withdraw->payment_method->tax * 1 / 100;
-            $tax_company_value = $order_status->withdraw->payment_method->tax * 1 / 100;
-            $taxes = ($currency_change * $tax_value) + ($currency_change * $tax_company_value);
-            return $currency_change * $tax_value;
-
             $user_id =  $order_status->withdraw->user_id;
             $user = User::find($user_id);
             $user->update([
                 "points" => $user->points - $order_status->withdraw->value
             ]);
-        } elseif ($request["type"] == 3) {
+
             $status = Status::where("type", 3)->first();
             $data = [
                 "order_id" => $order_status->order_id,
@@ -170,10 +160,9 @@ class OrderStatusController extends Controller
             ]);
         } elseif ($order_status->type == 1) {
             $new_order = $this->withdrawChangeState($order_status, $request);
-            return $new_order;
-            // AdminLog::create([
-            //     "target_id" => $order_status->order_id,
-            // ]);
+            AdminLog::create([
+                "target_id" => $order_status->order_id,
+            ]);
         }
         return  $this->send_response(200, "تم تغير حالة الطلب", [], OrderStatus::find($new_order->id));
     }

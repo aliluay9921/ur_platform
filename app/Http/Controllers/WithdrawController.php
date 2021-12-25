@@ -9,6 +9,9 @@ use App\Traits\Pagination;
 use App\Models\OrderStatus;
 use App\Traits\SendResponse;
 use Illuminate\Http\Request;
+use App\Models\ChangeCurrncy;
+use App\Models\joinRelations;
+use App\Models\PaymentMethod;
 use Illuminate\Support\Facades\Validator;
 
 class WithdrawController extends Controller
@@ -37,6 +40,7 @@ class WithdrawController extends Controller
         $validator = Validator::make($request, [
             "payment_method_id" => "required|exists:payment_methods,id",
             "value" => "required",
+            "currency_point" => "required",
             "target" => "required"
         ]);
         if ($validator->fails()) {
@@ -50,14 +54,32 @@ class WithdrawController extends Controller
             "user_id" => auth()->user()->id,
             "operation_number" => $this->random_code(),
         ];
-
-        $withdraw = Withdraw::create($data);
-        $status = Status::where("type", 0)->first();
-        OrderStatus::create([
-            "order_id" => $withdraw->id,
-            "status_id" => $status->id,
-            "type" => 1
-        ]);
-        return $this->send_response(200, "طلب سحب الاموال بأنتضار المراجعة", [], Withdraw::find($withdraw->id));
+        $user = auth()->user();
+        if (is_int($request["currency_point"])) {
+            if ($user->points >= $request["value"]) {
+                $relations = joinRelations::where("payment_method_id", $request["payment_method_id"])->first();
+                $currency =  ChangeCurrncy::where("currency", $relations->companies->currncy_type)->first();
+                $system_tax =  ($relations->payment_methods->tax / 100);
+                $company_tax = ($relations->payment_methods->point_value  / 100);
+                $new_curreny_point = ceil($request["currency_point"] / (1 - $system_tax - $company_tax));
+                $points = $new_curreny_point * $currency->points;
+                if ($points == $request["value"]) {
+                    $withdraw = Withdraw::create($data);
+                    $status = Status::where("type", 0)->first();
+                    OrderStatus::create([
+                        "order_id" => $withdraw->id,
+                        "status_id" => $status->id,
+                        "type" => 1
+                    ]);
+                    return $this->send_response(200, "طلب سحب الاموال بأنتضار المراجعة", [], Withdraw::find($withdraw->id));
+                } else {
+                    return $this->send_response(400, "لتصير لوتي براسي حبيبي", [], []);
+                }
+            } else {
+                return $this->send_response(400, "يرجى سحب قيمة موجود في حسابك", [], []);
+            }
+        } else {
+            return $this->send_response(400, "لايمكنك ادخال قيم عشرية", [], []);
+        }
     }
 }

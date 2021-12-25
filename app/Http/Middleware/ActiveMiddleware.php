@@ -21,7 +21,7 @@ class ActiveMiddleware
         if (auth()->user()->active == true) {
             return $next($request);
         } else {
-            return $this->send_response(401, 'يجب تأكيد البريد الالكتروني ليتم تفعيل الصفحة الخاصة بك', [], auth()->user());
+            return $this->send_response(200, 'يجب تأكيد البريد الالكتروني ليتم تفعيل الصفحة الخاصة بك', [], auth()->user());
         }
     }
 }
