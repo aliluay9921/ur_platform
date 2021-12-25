@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Country;
 use App\Models\UserCode;
 use App\Mail\ActivationMail;
+use App\Traits\Pagination;
 use App\Traits\SendResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    use SendResponse;
+    use SendResponse, Pagination;
 
     public function random_code()
     {

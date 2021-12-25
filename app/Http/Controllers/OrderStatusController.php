@@ -103,10 +103,41 @@ class OrderStatusController extends Controller
             $user->update([
                 "points" => $user->points - $order_status->withdraw->value
             ]);
+        } elseif ($request["type" == 3]) {
+            $status = Status::where("type", 3)->first();
+            $data = [
+                "order_id" => $order_status->order_id,
+                "status_id" => $status->id,
+                "type" => $order_status->type,
+                "before_operation" => $order_status->withdraw->user->points,
+                "after_operation" => $order_status->withdraw->user->points - $request["value"],
+            ];
+            if (array_key_exists("message", $request)) {
+                $data["message"] = $request["message"];
+            }
+            if (array_key_exists("value", $request)) {
+                $order_status->withdraw->update([
+                    "value" => $request["value"]
+                ]);
+            }
+            $user_id =  $order_status->withdraw->user_id;
+            $user = User::find($user_id);
+            $user->update([
+                "points" => $user->points - $request["value"]
+            ]);
+        } elseif ($request["type"] == 4) {
+            $status = Status::where("type", 4)->first();
+            $data = [
+                "order_id" => $order_status->order_id,
+                "status_id" => $status->id,
+                "type" => $order_status->type,
+
+            ];
+            if (array_key_exists("message", $request)) {
+                $data["message"] = $request["message"];
+            }
         }
-
-
-        return $order_status;
+        return   OrderStatus::create($data);
     }
     public function changeTypeOrderStatus(Request $request)
     {
@@ -125,8 +156,10 @@ class OrderStatusController extends Controller
                 "target_id" => $order_status->order_id,
             ]);
         } elseif ($order_status->type == 1) {
-
-            return $this->withdrawChangeState($order_status, $request);
+            $new_order = $this->withdrawChangeState($order_status, $request);
+            AdminLog::create([
+                "target_id" => $order_status->order_id,
+            ]);
         }
         return  $this->send_response(200, "تم تغير حالة الطلب", [], OrderStatus::find($new_order->id));
     }
