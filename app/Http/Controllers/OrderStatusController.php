@@ -33,13 +33,13 @@ class OrderStatusController extends Controller
                 "order_id" => $order_status->order_id,
                 "status_id" => $status->id,
                 "type" => $order_status->type,
-                "before_operation" => $order_status->relations->user->points,
-                "after_operation" => $order_status->relations->user->points + $order_status->relations->value,
+                "before_operation" => $order_status->deposit->user->points,
+                "after_operation" => $order_status->deposit->user->points + $order_status->deposit->value,
             ];
-            $user_id =  $order_status->relations->user_id;
+            $user_id =  $order_status->deposit->user_id;
             $user = User::find($user_id);
             $user->update([
-                "points" => $user->points + $order_status->relations->value
+                "points" => $user->points + $order_status->deposit->value
             ]);
         } elseif ($request["type"] == 3) {
             $status = Status::where("type", 3)->first();
@@ -47,18 +47,18 @@ class OrderStatusController extends Controller
                 "order_id" => $order_status->order_id,
                 "status_id" => $status->id,
                 "type" => $order_status->type,
-                "before_operation" => $order_status->relations->user->points,
-                "after_operation" => $order_status->relations->user->points + $request["value"],
+                "before_operation" => $order_status->deposit->user->points,
+                "after_operation" => $order_status->deposit->user->points + $request["value"],
             ];
             if (array_key_exists("message", $request)) {
                 $data["message"] = $request["message"];
             }
             if (array_key_exists("value", $request)) {
-                $order_status->relations->update([
+                $order_status->deposit->update([
                     "value" => $request["value"]
                 ]);
             }
-            $user_id =  $order_status->relations->user_id;
+            $user_id =  $order_status->deposit->user_id;
             $user = User::find($user_id);
             $user->update([
                 "points" => $user->points + $request["value"]
@@ -95,10 +95,18 @@ class OrderStatusController extends Controller
                 "order_id" => $order_status->order_id,
                 "status_id" => $status->id,
                 "type" => $order_status->type,
-                "before_operation" => $order_status->relations->user->points,
-                "after_operation" => $order_status->relations->user->points - $order_status->relations->value,
+                "before_operation" => $order_status->withdraw->user->points,
+                "after_operation" => $order_status->withdraw->user->points - $order_status->withdraw->value,
             ];
+            $user_id =  $order_status->withdraw->user_id;
+            $user = User::find($user_id);
+            $user->update([
+                "points" => $user->points - $order_status->withdraw->value
+            ]);
         }
+
+
+        return $order_status;
     }
     public function changeTypeOrderStatus(Request $request)
     {
@@ -118,7 +126,7 @@ class OrderStatusController extends Controller
             ]);
         } elseif ($order_status->type == 1) {
 
-            return $order_status;
+            return $this->withdrawChangeState($order_status, $request);
         }
         return  $this->send_response(200, "تم تغير حالة الطلب", [], OrderStatus::find($new_order->id));
     }

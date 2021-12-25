@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Route;
 Route::post("login", [AuthController::class, "login"]);
 Route::post("register", [AuthController::class, "register"]);
 Route::post('forget_password', [AuthController::class, 'forgetPassword']); //->middleware('throttle:1,3');
+route::get("get_countries", [AuthController::class, "getCountries"]);
 
 
 Route::middleware(['auth:api', 'restrict'])->group(function () {
