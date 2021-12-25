@@ -17,6 +17,12 @@ class PaymentMethodsController extends Controller
 
     public function getPaymentMethods()
     {
+        if (isset($_GET["company_id"])) {
+            $payment = PaymentMethod::whereHas("join_relations", function ($q) {
+                $q->where("company_id", $_GET["company_id"]);
+            })->first();
+            return $this->send_response(200, "تم اضافة طريقة دفع جديدة بنجاح", [], $payment);
+        }
         $payments = PaymentMethod::whereHas("join_relations", function ($q) {
             $q->whereHas("companies", function ($query) {
                 $query->where("active", 1);

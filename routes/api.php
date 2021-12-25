@@ -7,6 +7,7 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DepositController;
 use App\Http\Controllers\OrderStatusController;
 use App\Http\Controllers\PaymentMethodsController;
+use App\Http\Controllers\WithdrawController;
 use App\Models\ChangeCurrncy;
 use App\Models\Deposit;
 use App\Models\PaymentMethod;
@@ -39,8 +40,7 @@ Route::middleware(['auth:api', 'restrict'])->group(function () {
         route::get("get_currencies", [ChangeCurrncyController::class, "getCurrency"]);
 
         route::post("add_deposit", [DepositController::class, "addDeposit"]);
-
-
+        route::post("add_withdraw", [WithdrawController::class, "addWithdraw"]);
         route::put("update_auth_user", [AuthController::class, "updateAuthUser"]);
     });
     Route::middleware('admin')->group(function () {

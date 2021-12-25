@@ -78,6 +78,28 @@ class OrderStatusController extends Controller
         }
         return   OrderStatus::create($data);
     }
+
+    public function withdrawChangeState($order_status, $request)
+    {
+        $data = [];
+        if ($request["type"] == 1) {
+            $status = Status::where("type", 1)->first();
+            $data = [
+                "order_id" => $order_status->order_id,
+                "status_id" => $status->id,
+                "type" => $order_status->type
+            ];
+        } elseif ($request["type"] == 2) {
+            $status = Status::where("type", 2)->first();
+            $data = [
+                "order_id" => $order_status->order_id,
+                "status_id" => $status->id,
+                "type" => $order_status->type,
+                "before_operation" => $order_status->relations->user->points,
+                "after_operation" => $order_status->relations->user->points - $order_status->relations->value,
+            ];
+        }
+    }
     public function changeTypeOrderStatus(Request $request)
     {
         $request = $request->json()->all();
@@ -89,10 +111,15 @@ class OrderStatusController extends Controller
             return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
         }
         $order_status = OrderStatus::find($request["order_status_id"]);
-        $new_order = $this->depositChangeState($order_status, $request);
-        AdminLog::create([
-            "target_id" => $order_status->order_id,
-        ]);
+        if ($order_status->type == 0) {
+            $new_order = $this->depositChangeState($order_status, $request);
+            AdminLog::create([
+                "target_id" => $order_status->order_id,
+            ]);
+        } elseif ($order_status->type == 1) {
+
+            return $order_status;
+        }
         return  $this->send_response(200, "تم تغير حالة الطلب", [], OrderStatus::find($new_order->id));
     }
 }

@@ -12,21 +12,30 @@ class OrderStatus extends Model
 
     protected $guarded = [];
     protected $with = ["status", "relations"];
-    // public function deposit()
-    // {
-    //     return $this->belongsTo(Deposit::class, 'order_id');
-    // }
-    // public function withdraw()
-    // {
-    //     return $this->belongsTo(Withdraw::class, 'order_id');
-    // }
+    public function deposit()
+    {
+        return $this->belongsTo(Deposit::class, 'order_id');
+    }
+    public function withdraw()
+    {
+        return $this->belongsTo(Withdraw::class, 'order_id');
+    }
 
     public function relations()
     {
-        if ($this->type == 0) {
-            return $this->belongsTo(Deposit::class, 'order_id');
-        } elseif ($this->type == 1) {
-            return $this->belongsTo(Withdraw::class, 'order_id');
+        // return $this->type;
+        // if ($type == 0) {
+        //     return  $this->deposit();
+        // } elseif ($type == 1) {
+        //     return $this->withdraw();
+        // }
+        switch ($this->type) {
+            case 0:
+                return $this->belongsTo(Deposit::class, 'order_id');
+                break;
+            case 1:
+                return $this->belongsTo(Withdraw::class, 'order_id');
+                break;
         }
     }
     public function status()
