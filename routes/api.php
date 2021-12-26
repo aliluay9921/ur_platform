@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\ChangeCurrncyController;
@@ -49,6 +50,8 @@ Route::middleware(['auth:api', 'restrict'])->group(function () {
         route::put("update_auth_user", [AuthController::class, "updateAuthUser"]);
     });
     Route::middleware('admin')->group(function () {
+
+        route::get("get_admin_logs", [AdminController::class, "getAdminLogs"]);
 
         route::post("add_company", [CompanyController::class, "addCompany"]);
         route::post("add_payment_method", [PaymentMethodsController::class, "addPaymentMethod"]);

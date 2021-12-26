@@ -22,11 +22,10 @@ class CompanyController extends Controller
             $filter = json_decode($_GET['filter']);
             if ($filter->type == 0) {
                 $companies->whereHas("join_relations", function ($query) use ($filter) {
-                    error_log("here");
-                    $query->whereNotNull($filter->name);
+                    $query->whereNotNull($filter->name); // filter in relations
                 });
             } else {
-                $companies->orwhere($filter->name, $filter->value);
+                $companies->orwhere($filter->name, $filter->value); //filter in model without relations 
             }
         }
         if (isset($_GET['query'])) {

@@ -10,18 +10,15 @@ class AdminLog extends Model
 {
     use HasFactory, Uuids;
     protected $guarded = [];
+    protected $with = ["transactions", "cards"];
 
+    public function transactions()
+    {
+        return $this->belongsTo(Transaction::class, 'target_id');
+    }
 
-    public function deposit()
-    {
-        return $this->belongsTo(Deposit::class, 'target_id')->where("type", 0);
-    }
-    public function withdraw()
-    {
-        return $this->belongsTo(Withdraw::class, 'target_id')->where("type", 1);
-    }
     public function cards()
     {
-        return $this->belongsTo(Card::class, 'target_id')->where("type", 2);
+        return $this->belongsTo(Card::class, 'target_id');
     }
 }

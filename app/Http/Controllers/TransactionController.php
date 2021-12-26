@@ -85,11 +85,12 @@ class TransactionController extends Controller
             "operation_number" => $this->random_code(),
             "payment_method_id" => $request["payment_method_id"],
             "user_id" => auth()->user()->id,
-            "type" => 0
+            "type" => 0,
+            "net_price" => $request["net_price"]
+
         ];
         $payments = PaymentMethod::find($request["payment_method_id"]);
-
-        if ($request["net_price"] > $payments->min_value) {
+        if ($request["net_price"] >= $payments->min_value) {
             $deposit = Transaction::create($data);
             $status = Status::where("type", 0)->first();
             OrderStatus::create([
@@ -124,11 +125,12 @@ class TransactionController extends Controller
             "target" => $request["target"],
             "user_id" => auth()->user()->id,
             "operation_number" => $this->random_code(),
-            "type" => 1
+            "type" => 1,
+            "net_price" => $request["net_price"]
         ];
         $user = auth()->user();
         $payments = PaymentMethod::find($request["payment_method_id"]);
-        if ($request["net_price"] > $payments->min_value) {
+        if ($request["net_price"] >= $payments->min_value) {
             if (is_int($request["net_price"])) {
                 if ($user->points >= $request["value"]) {
                     $relations = joinRelations::where("payment_method_id", $request["payment_method_id"])->first();
