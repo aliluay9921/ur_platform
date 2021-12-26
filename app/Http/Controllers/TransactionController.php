@@ -10,6 +10,7 @@ use App\Traits\SendResponse;
 use Illuminate\Http\Request;
 use App\Models\ChangeCurrncy;
 use App\Models\joinRelations;
+use App\Models\PaymentMethod;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
@@ -63,13 +64,19 @@ class TransactionController extends Controller
             "user_id" => auth()->user()->id,
             "type" => 0
         ];
-        $deposit = Transaction::create($data);
-        $status = Status::where("type", 0)->first();
-        OrderStatus::create([
-            "order_id" => $deposit->id,
-            "status_id" => $status->id,
-            "type" => 0
-        ]);
+        $payments = PaymentMethod::find($request["payment_method_id"]);
+        if ($request["net_price"] > $payments->min_value) {
+            $deposit = Transaction::create($data);
+            $status = Status::where("type", 0)->first();
+            OrderStatus::create([
+                "order_id" => $deposit->id,
+                "status_id" => $status->id,
+                "type" => 0
+            ]);
+        } else {
+            return $this->send_response(400, "يجب تحويل قيمة اكبر من" . ' $' . $payments->min_value, [], []);
+        }
+
 
         return $this->send_response(200, "طلب الايداع بأنتضار المراجعة", [], Transaction::find($deposit->id));
     }
@@ -96,7 +103,8 @@ class TransactionController extends Controller
             "type" => 1
         ];
         $user = auth()->user();
-        if ($request["net_price"] > 10) {
+        $payments = PaymentMethod::find($request["payment_method_id"]);
+        if ($request["net_price"] > $payments->min_value) {
             if (is_int($request["net_price"])) {
                 if ($user->points >= $request["value"]) {
                     $relations = joinRelations::where("payment_method_id", $request["payment_method_id"])->first();
@@ -126,7 +134,7 @@ class TransactionController extends Controller
                 return $this->send_response(400, "لايمكنك ادخال قيم عشرية", [], []);
             }
         } else {
-            return $this->send_response(400, "يجب تحويل قيمة اكبر من $10", [], []);
+            return $this->send_response(400, "يجب تحويل قيمة اكبر من" . ' $' . $payments->min_value, [], []);
         }
     }
 }
