@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AdminLog;
 use App\Models\Status;
 use App\Traits\Pagination;
 use App\Models\OrderStatus;
@@ -93,10 +94,16 @@ class TransactionController extends Controller
         if ($request["net_price"] >= $payments->min_value) {
             $deposit = Transaction::create($data);
             $status = Status::where("type", 0)->first();
-            OrderStatus::create([
+            $order =   OrderStatus::create([
                 "order_id" => $deposit->id,
                 "status_id" => $status->id,
                 "type" => 0
+            ]);
+            $deposit->update([
+                "last_order" => $order->id
+            ]);
+            AdminLog::create([
+                "target_id" => $deposit->id
             ]);
         } else {
             return $this->send_response(400, "يجب تحويل قيمة اكبر من" . ' $' . $payments->min_value, [], []);
@@ -144,10 +151,16 @@ class TransactionController extends Controller
                     if ($points == $request["value"]) {
                         $withdraw = Transaction::create($data);
                         $status = Status::where("type", 0)->first();
-                        OrderStatus::create([
+                        $order =  OrderStatus::create([
                             "order_id" => $withdraw->id,
                             "status_id" => $status->id,
                             "type" => 1
+                        ]);
+                        $withdraw->update([
+                            "last_order" => $order->id
+                        ]);
+                        AdminLog::create([
+                            "target_id" => $withdraw->id
                         ]);
                         return $this->send_response(200, "طلب سحب الاموال بأنتضار المراجعة", [], Transaction::find($withdraw->id));
                     } else {
