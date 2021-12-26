@@ -33,9 +33,9 @@ class TransactionController extends Controller
             return $code;
         }
     }
-    public function getTransaction()
+    public function getTransactions()
     {
-        $transactions = Transaction::with("last_order");
+        $transactions = Transaction::with("last_order")->where("user_id", auth()->user()->id);
         if (isset($_GET['filter'])) {
             $filter = json_decode($_GET['filter']);
             $transactions->where($filter->name, $filter->value);
@@ -43,7 +43,6 @@ class TransactionController extends Controller
         if (isset($_GET['query'])) {
             $transactions->where(function ($q) {
                 $columns = Schema::getColumnListing('transactions');
-
                 foreach ($columns as $column) {
                     $q->orWhere($column, 'LIKE', '%' . $_GET['query'] . '%');
                 }

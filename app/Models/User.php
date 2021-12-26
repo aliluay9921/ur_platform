@@ -44,14 +44,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserCode::class, 'user_id');
     }
-    public function deposites()
+    public function transactions()
     {
-        return $this->hasMany(Deposit::class, 'user_id');
+        return $this->hasMany(Transaction::class, 'user_id');
     }
-    public function withdrawes()
-    {
-        return $this->hasMany(Withdraw::class, 'user_id');
-    }
+
     public function tickets()
     {
         return $this->hasMany(Ticket::class, 'user_id');

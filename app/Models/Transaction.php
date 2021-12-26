@@ -26,8 +26,6 @@ class Transaction extends Model
     {
         return $this->hasMany(OrderStatus::class, 'order_id');
     }
-
-
     public function last_order()
     {
         return $this->hasOne(OrderStatus::class, 'order_id');

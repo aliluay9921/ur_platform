@@ -38,7 +38,8 @@ Route::middleware(['auth:api', 'restrict'])->group(function () {
     route::put("activation_account", [AuthController::class, "activationAccount"]);
     Route::middleware('active')->group(function () {
 
-        route::get("get_transaction", [TransactionController::class, "getTransaction"]);
+        route::get("get_transactions", [TransactionController::class, "getTransactions"]);
+
         route::get("info_auth", [AuthController::class, "infoAuth"]);
         route::get("get_cards", [CardController::class, "getCards"]);
         route::get("get_companies", [CompanyController::class, "getCompanies"]);
@@ -52,7 +53,7 @@ Route::middleware(['auth:api', 'restrict'])->group(function () {
     Route::middleware('admin')->group(function () {
 
         route::get("get_admin_logs", [AdminController::class, "getAdminLogs"]);
-
+        route::get("get_users", [AdminController::class, "getUsers"]);
         route::post("add_company", [CompanyController::class, "addCompany"]);
         route::post("add_payment_method", [PaymentMethodsController::class, "addPaymentMethod"]);
         route::post("add_card", [CardController::class, "addCard"]);
