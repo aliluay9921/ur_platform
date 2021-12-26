@@ -35,7 +35,29 @@ class TransactionController extends Controller
     public function getTransaction()
     {
         $transactions = Transaction::with("last_order");
+        if (isset($_GET['filter'])) {
+            $filter = json_decode($_GET['filter']);
+            $transactions->where($filter->name, $filter->value);
+        }
+        if (isset($_GET['query'])) {
+            $transactions->where(function ($q) {
+                $columns = Schema::getColumnListing('transactions');
 
+                foreach ($columns as $column) {
+                    $q->orWhere($column, 'LIKE', '%' . $_GET['query'] . '%');
+                }
+            });
+        }
+        if (isset($_GET)) {
+            foreach ($_GET as $key => $value) {
+                if ($key == 'skip' || $key == 'limit' || $key == 'query' || $key == 'filter') {
+                    continue;
+                } else {
+                    $sort = $value == 'true' ? 'desc' : 'asc';
+                    $transactions->orderBy($key,  $sort);
+                }
+            }
+        }
         if (!isset($_GET['skip']))
             $_GET['skip'] = 0;
         if (!isset($_GET['limit']))
@@ -50,6 +72,7 @@ class TransactionController extends Controller
         $validator = Validator::make($request, [
             "target" => "required",
             "value" => "required",
+            "net_price" => "required",
             "payment_method_id" => "required|exists:payment_methods,id"
         ]);
         if ($validator->fails()) {
@@ -65,6 +88,7 @@ class TransactionController extends Controller
             "type" => 0
         ];
         $payments = PaymentMethod::find($request["payment_method_id"]);
+
         if ($request["net_price"] > $payments->min_value) {
             $deposit = Transaction::create($data);
             $status = Status::where("type", 0)->first();

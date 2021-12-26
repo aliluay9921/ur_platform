@@ -20,7 +20,14 @@ class CompanyController extends Controller
         $companies = Company::select("*");
         if (isset($_GET['filter'])) {
             $filter = json_decode($_GET['filter']);
-            $companies->where($filter->name, $filter->value);
+            if ($filter->type == 0) {
+                $companies->whereHas("join_relations", function ($query) use ($filter) {
+                    error_log("here");
+                    $query->whereNotNull($filter->name);
+                });
+            } else {
+                $companies->orwhere($filter->name, $filter->value);
+            }
         }
         if (isset($_GET['query'])) {
             $companies->where(function ($q) {
