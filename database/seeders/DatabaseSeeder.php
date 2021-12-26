@@ -20,5 +20,6 @@ class DatabaseSeeder extends Seeder
         $this->call(CompaniesSeeder::class);
         $this->call(cardsSeeder::class);
         $this->call(CountriesSeeder::class);
+        $this->call(statusSeeder::class);
     }
 }

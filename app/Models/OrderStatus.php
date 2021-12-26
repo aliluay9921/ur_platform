@@ -13,7 +13,7 @@ class OrderStatus extends Model
     use HasFactory, Uuids;
 
     protected $guarded = [];
-    protected $with = ["status", "deposit", "withdraw"];
+    protected $with = ["status", "transactions"];
 
 
     public function deposit()
@@ -23,6 +23,11 @@ class OrderStatus extends Model
     public function withdraw()
     {
         return $this->belongsTo(Withdraw::class, 'order_id');
+    }
+
+    public function transactions()
+    {
+        return $this->belongsTo(Transaction::class, 'order_id');
     }
 
 

@@ -19,7 +19,7 @@ class CreatePaymentMethodsTable extends Migration
             $table->string("barcode")->nullable();
             $table->uuid("order_key_type_id");
             $table->double("tax");
-            $table->double("point_value")->nullable();
+            $table->double("company_tax")->nullable();
             $table->text("note")->nullable();
             $table->timestamps();
         });

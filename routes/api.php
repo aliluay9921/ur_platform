@@ -7,10 +7,12 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DepositController;
 use App\Http\Controllers\OrderStatusController;
 use App\Http\Controllers\PaymentMethodsController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\WithdrawController;
 use App\Models\ChangeCurrncy;
 use App\Models\Deposit;
 use App\Models\PaymentMethod;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -34,14 +36,16 @@ route::get("get_countries", [AuthController::class, "getCountries"]);
 Route::middleware(['auth:api', 'restrict'])->group(function () {
     route::put("activation_account", [AuthController::class, "activationAccount"]);
     Route::middleware('active')->group(function () {
+
+        route::get("get_transaction", [TransactionController::class, "getTransaction"]);
         route::get("info_auth", [AuthController::class, "infoAuth"]);
         route::get("get_cards", [CardController::class, "getCards"]);
         route::get("get_companies", [CompanyController::class, "getCompanies"]);
         route::get("get_payment_methods", [PaymentMethodsController::class, "getPaymentMethods"]);
         route::get("get_currencies", [ChangeCurrncyController::class, "getCurrency"]);
 
-        route::post("add_deposit", [DepositController::class, "addDeposit"]);
-        route::post("add_withdraw", [WithdrawController::class, "addWithdraw"]);
+        route::post("add_deposit", [TransactionController::class, "addDeposit"]);
+        route::post("add_withdraw", [TransactionController::class, "addWithdraw"]);
         route::put("update_auth_user", [AuthController::class, "updateAuthUser"]);
     });
     Route::middleware('admin')->group(function () {

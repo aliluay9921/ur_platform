@@ -10,7 +10,7 @@ class Deposit extends Model
 {
     use HasFactory, Uuids;
     protected $guarded = [];
-    protected $with = ["user"];
+    protected $with = ["user", "payment_method"];
 
     public function payment_method()
     {

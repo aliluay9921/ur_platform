@@ -21,7 +21,7 @@ class PaymentMethodsController extends Controller
             $payment = PaymentMethod::whereHas("join_relations", function ($q) {
                 $q->where("company_id", $_GET["company_id"]);
             })->first();
-            return $this->send_response(200, "تم اضافة طريقة دفع جديدة بنجاح", [], $payment);
+            return $this->send_response(200, "تم جلب العنصر بنجاح", [], $payment);
         }
         $payments = PaymentMethod::whereHas("join_relations", function ($q) {
             $q->whereHas("companies", function ($query) {
@@ -62,7 +62,6 @@ class PaymentMethodsController extends Controller
         $res = $this->paging($payments,  $_GET['skip'],  $_GET['limit']);
         return $this->send_response(200, 'تم جلب طرق الدفع بنجاح ', [], $res["model"], null, $res["count"]);
     }
-
     public function addPaymentMethod(Request $request)
     {
         $request = $request->json()->all();
@@ -71,6 +70,7 @@ class PaymentMethodsController extends Controller
             "order_key_type_id" => "required|exists:order_key_types,id",
             "tax" => "required",
             "company_id" => "required|exists:companies,id",
+            "company_tax" => "required"
         ], [
             "key.required" => "يرجى ادخال مفتاح التحويل",
             "order_key_type_id.required" => "يرجى ادخال  نوع عملية التحويل",
@@ -85,12 +85,10 @@ class PaymentMethodsController extends Controller
             "key" => $request["key"],
             "order_key_type_id" => $request["order_key_type_id"],
             "tax" => $request["tax"],
+            "company_tax" => $request["company_tax"],
         ];
         if (array_key_exists("note", $request)) {
             $data["note"] = $request["note"];
-        }
-        if (array_key_exists("point_value", $request)) {
-            $data["point_value"] = $request["point_value"];
         }
         if (array_key_exists("barcode", $request)) {
             $data["barcode"] = $this->uploadPicture($request["barcode"], '/images/paymentBarcode/');
@@ -103,8 +101,6 @@ class PaymentMethodsController extends Controller
         ]);
         return $this->send_response(200, "تم اضافة طريقة دفع جديدة بنجاح", [], PaymentMethod::find($payment->id));
     }
-
-
     public function editPaymentMethod(Request $request)
     {
         $request = $request->json()->all();
@@ -114,6 +110,8 @@ class PaymentMethodsController extends Controller
             "order_key_type_id" => "required|exists:order_key_types,id",
             "tax" => "required",
             "company_id" => "required|exists:companies,id",
+            "company_tax" => "required"
+
         ]);
         if ($validator->fails()) {
             return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
@@ -122,13 +120,12 @@ class PaymentMethodsController extends Controller
             "key" => $request["key"],
             "order_key_type_id" => $request["order_key_type_id"],
             "tax" => $request["tax"],
+            "company_tax" => $request["company_tax"],
         ];
         if (array_key_exists("note", $request)) {
             $data["note"] = $request["note"];
         }
-        if (array_key_exists("point_value", $request)) {
-            $data["point_value"] = $request["point_value"];
-        }
+
         if (array_key_exists("barcode", $request)) {
             $data["barcode"] = $this->uploadPicture($request["barcode"], '/images/paymentBarcode/');
         }
