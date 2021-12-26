@@ -66,14 +66,11 @@ class PaymentMethodsController extends Controller
     {
         $request = $request->json()->all();
         $validator = Validator::make($request, [
-            "key" => "required",
-            "order_key_type_id" => "required|exists:order_key_types,id",
+            "order_key_type_id" => "exists:order_key_types,id",
             "tax" => "required",
             "company_id" => "required|exists:companies,id",
             "company_tax" => "required"
         ], [
-            "key.required" => "يرجى ادخال مفتاح التحويل",
-            "order_key_type_id.required" => "يرجى ادخال  نوع عملية التحويل",
             "tax.required" => "يرجى ادخال  قيمة الاستقطاع",
             "company_id.required" => "يرجى تحديد الشركة",
         ]);
@@ -82,13 +79,17 @@ class PaymentMethodsController extends Controller
         }
         $data = [];
         $data = [
-            "key" => $request["key"],
-            "order_key_type_id" => $request["order_key_type_id"],
             "tax" => $request["tax"],
             "company_tax" => $request["company_tax"],
         ];
         if (array_key_exists("note", $request)) {
             $data["note"] = $request["note"];
+        }
+        if (array_key_exists("key", $request)) {
+            $data["key"] = $request["key"];
+        }
+        if (array_key_exists("order_key_type_id", $request)) {
+            $data["order_key_type_id"] = $request["order_key_type_id"];
         }
         if (array_key_exists("barcode", $request)) {
             $data["barcode"] = $this->uploadPicture($request["barcode"], '/images/paymentBarcode/');
@@ -106,8 +107,7 @@ class PaymentMethodsController extends Controller
         $request = $request->json()->all();
         $validator = Validator::make($request, [
             "id" => "required|exists:payment_methods,id",
-            "key" => "required",
-            "order_key_type_id" => "required|exists:order_key_types,id",
+            "order_key_type_id" => "exists:order_key_types,id",
             "tax" => "required",
             "company_id" => "required|exists:companies,id",
             "company_tax" => "required"
@@ -117,11 +117,15 @@ class PaymentMethodsController extends Controller
             return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
         }
         $data = [
-            "key" => $request["key"],
-            "order_key_type_id" => $request["order_key_type_id"],
             "tax" => $request["tax"],
             "company_tax" => $request["company_tax"],
         ];
+        if (array_key_exists("key", $request)) {
+            $data["key"] = $request["key"];
+        }
+        if (array_key_exists("order_key_type_id", $request)) {
+            $data["order_key_type_id"] = $request["order_key_type_id"];
+        }
         if (array_key_exists("note", $request)) {
             $data["note"] = $request["note"];
         }

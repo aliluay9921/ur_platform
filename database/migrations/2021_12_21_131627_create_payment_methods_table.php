@@ -15,9 +15,9 @@ class CreatePaymentMethodsTable extends Migration
     {
         Schema::create('payment_methods', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string("key");
+            $table->string("key")->nullable();
             $table->string("barcode")->nullable();
-            $table->uuid("order_key_type_id");
+            $table->uuid("order_key_type_id")->nullable();
             $table->double("tax");
             $table->double("company_tax")->nullable();
             $table->text("note")->nullable();

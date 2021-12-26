@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Models\ChangeCurrncy;
 use App\Models\joinRelations;
 use App\Models\PaymentMethod;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
@@ -145,23 +146,47 @@ class TransactionController extends Controller
                     $company_tax = ($relations->payment_methods->company_tax  / 100);
                     $new_curreny_point = ceil($request["net_price"] / (1 - $system_tax - $company_tax));
                     $points = $new_curreny_point * $currency->points;
-                    error_log($points . "" . $new_curreny_point);
 
                     if ($points == $request["value"]) {
-                        $withdraw = Transaction::create($data);
-                        $status = Status::where("type", 0)->first();
-                        $order =  OrderStatus::create([
-                            "order_id" => $withdraw->id,
-                            "status_id" => $status->id,
-                            "type" => 1
-                        ]);
-                        $withdraw->update([
-                            "last_order" => $order->id
-                        ]);
-                        AdminLog::create([
-                            "target_id" => $withdraw->id
-                        ]);
-                        return $this->send_response(200, "طلب سحب الاموال بأنتضار المراجعة", [], Transaction::find($withdraw->id));
+                        if ($relations->companies->currncy_type == "points") {
+                            // transaction point on user to another 
+                            $to_user = User::where("user_name", $request["target"])->first();
+                            $from_user = User::find($user->id);
+                            $to_user->update([
+                                "points" => $to_user->points + $request["value"]
+                            ]);
+                            $from_user->update([
+                                "points" => $from_user->points - $request["value"]
+                            ]);
+                            $transactions_points = Transaction::create($data);
+                            AdminLog::create([
+                                "target_id" => $transactions_points->id
+                            ]);
+                            $status = Status::where("type", 2)->first();
+                            $order =  OrderStatus::create([
+                                "order_id" => $transactions_points->id,
+                                "status_id" => $status->id,
+                                "type" => 1,
+                                "after_operation" => $from_user->points - $request["value"],
+                                "before_operation" => $from_user->points,
+                            ]);
+                            return $this->send_response(200, "تمت عملية تحويل الرصيد بنجاح", [], Transaction::find($transactions_points->id));
+                        } else {
+                            $withdraw = Transaction::create($data);
+                            $status = Status::where("type", 0)->first();
+                            $order =  OrderStatus::create([
+                                "order_id" => $withdraw->id,
+                                "status_id" => $status->id,
+                                "type" => 1
+                            ]);
+                            $withdraw->update([
+                                "last_order" => $order->id
+                            ]);
+                            AdminLog::create([
+                                "target_id" => $withdraw->id
+                            ]);
+                            return $this->send_response(200, "طلب سحب الاموال بأنتضار المراجعة", [], Transaction::find($withdraw->id));
+                        }
                     } else {
                         return $this->send_response(400, "لتصير لوتي براسي حبيبي", [], []);
                     }
