@@ -10,6 +10,7 @@ class TicketComment extends Model
 {
     use HasFactory, Uuids;
     protected $guarded = [];
+    protected $with = ["user", "images"];
 
 
     public function user()
@@ -19,5 +20,9 @@ class TicketComment extends Model
     public function ticket()
     {
         return $this->belongsTo(Ticket::class, 'ticket_id');
+    }
+    public function images()
+    {
+        return $this->hasMany(Image::class, 'target_id');
     }
 }

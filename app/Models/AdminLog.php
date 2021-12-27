@@ -10,7 +10,7 @@ class AdminLog extends Model
 {
     use HasFactory, Uuids;
     protected $guarded = [];
-    protected $with = ["transactions", "cards"];
+    // protected $with = ["transactions", "transactions.last_order", "cards"];
 
     public function transactions()
     {

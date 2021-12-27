@@ -8,11 +8,14 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DepositController;
 use App\Http\Controllers\OrderStatusController;
 use App\Http\Controllers\PaymentMethodsController;
+use App\Http\Controllers\TicketController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\WithdrawController;
 use App\Models\ChangeCurrncy;
 use App\Models\Deposit;
 use App\Models\PaymentMethod;
+use App\Models\Ticket;
+use App\Models\TicketComment;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -39,15 +42,19 @@ Route::middleware(['auth:api', 'restrict'])->group(function () {
     Route::middleware('active')->group(function () {
 
         route::get("get_transactions", [TransactionController::class, "getTransactions"]);
+        route::get("get_order_status_by_transactions", [OrderStatusController::class, "getOrderStatusByTransactions"]);
 
         route::get("info_auth", [AuthController::class, "infoAuth"]);
         route::get("get_cards", [CardController::class, "getCards"]);
         route::get("get_companies", [CompanyController::class, "getCompanies"]);
         route::get("get_payment_methods", [PaymentMethodsController::class, "getPaymentMethods"]);
         route::get("get_currencies", [ChangeCurrncyController::class, "getCurrency"]);
-
+        route::get("get_tickets", [TicketController::class, "getTickets"]);
+        route::post("add_comment_ticket", [TicketController::class, "addCommentTicket"]);
+        route::post("open_ticket", [TicketController::class, "openTicket"]);
         route::post("add_deposit", [TransactionController::class, "addDeposit"]);
         route::post("add_withdraw", [TransactionController::class, "addWithdraw"]);
+        route::put("close_ticket", [TicketController::class, "closeTicket"]);
         route::put("update_auth_user", [AuthController::class, "updateAuthUser"]);
     });
     Route::middleware('admin')->group(function () {

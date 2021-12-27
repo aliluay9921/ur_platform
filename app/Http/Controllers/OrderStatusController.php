@@ -147,6 +147,21 @@ class OrderStatusController extends Controller
         $transaction->update([
             "last_order" => $order_status
         ]);
-        return  $this->send_response(200, "تم تغير حالة الطلب", [], OrderStatus::find($new_order->id));
+        return  $this->send_response(200, "تم تغير حالة الطلب", [], OrderStatus::with("transactions")->find($new_order->id));
+    }
+
+
+    public function getOrderStatusByTransactions()
+    {
+        // get order status for each transactions 
+        if (isset($_GET["transaction_id"])) {
+            $orders = OrderStatus::where("order_id", $_GET["transaction_id"]);
+            if (!isset($_GET['skip']))
+                $_GET['skip'] = 0;
+            if (!isset($_GET['limit']))
+                $_GET['limit'] = 10;
+            $res = $this->paging($orders,  $_GET['skip'],  $_GET['limit']);
+            return $this->send_response(200, 'تم جلب حالات الطلب بنجاح ', [], $res["model"], null, $res["count"]);
+        }
     }
 }

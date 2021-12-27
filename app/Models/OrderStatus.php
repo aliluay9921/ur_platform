@@ -13,7 +13,7 @@ class OrderStatus extends Model
     use HasFactory, Uuids;
 
     protected $guarded = [];
-    protected $with = ["status", "transactions"];
+    protected $with = ["status"];
 
 
     public function deposit()
