@@ -39,12 +39,13 @@ route::get("get_countries", [AuthController::class, "getCountries"]);
 
 Route::middleware(['auth:api', 'restrict'])->group(function () {
     route::put("activation_account", [AuthController::class, "activationAccount"]);
+    route::get("info_auth", [AuthController::class, "infoAuth"]);
+
     Route::middleware('active')->group(function () {
 
         route::get("get_transactions", [TransactionController::class, "getTransactions"]);
         route::get("get_order_status_by_transactions", [OrderStatusController::class, "getOrderStatusByTransactions"]);
 
-        route::get("info_auth", [AuthController::class, "infoAuth"]);
         route::get("get_cards", [CardController::class, "getCards"]);
         route::get("get_companies", [CompanyController::class, "getCompanies"]);
         route::get("get_payment_methods", [PaymentMethodsController::class, "getPaymentMethods"]);

@@ -36,10 +36,24 @@ class TransactionController extends Controller
     }
     public function getTransactions()
     {
-        $transactions = Transaction::with("last_order")->where("user_id", auth()->user()->id);
+        if (auth()->user()->user_type == 2 || auth()->user()->user_type == 1) {
+            $transactions = Transaction::with("last_order");
+        } else {
+            $transactions = Transaction::with("last_order")->where("user_id", auth()->user()->id);
+        }
         if (isset($_GET['filter'])) {
             $filter = json_decode($_GET['filter']);
-            $transactions->where($filter->name, $filter->value);
+            // return $filter;
+            if ($filter->type == 0) {
+                error_log("here");
+                $transactions->whereHas("last_order", function ($q) use ($filter) {
+                    $q->whereHas("status", function ($query)  use ($filter) {
+                        $query->where("type", $filter->value);
+                    });
+                });
+            } else {
+                $transactions->where($filter->name, $filter->value);
+            }
         }
         if (isset($_GET['query'])) {
             $transactions->where(function ($q) {
@@ -54,8 +68,16 @@ class TransactionController extends Controller
                 if ($key == 'skip' || $key == 'limit' || $key == 'query' || $key == 'filter') {
                     continue;
                 } else {
+
                     $sort = $value == 'true' ? 'desc' : 'asc';
-                    $transactions->orderBy($key,  $sort);
+                    // return $sort;
+                    if ($key == "status") {
+                        $transactions->join('order_statuses', 'transactions.last_order', '=', 'order_statuses.id');
+                        $transactions->join('statuses', 'order_statuses.status_id', '=', 'statuses.id');
+                        $transactions->orderBy('statuses.type', $sort);
+                    } else {
+                        $transactions->orderBy($key,  $sort);
+                    }
                 }
             }
         }
@@ -82,7 +104,7 @@ class TransactionController extends Controller
         $data = [];
         $data = [
             "target" => $request["target"],
-            "value" => $request["value"],
+            "value" => $request["value"], //points
             "operation_number" => $this->random_code(),
             "payment_method_id" => $request["payment_method_id"],
             "user_id" => auth()->user()->id,

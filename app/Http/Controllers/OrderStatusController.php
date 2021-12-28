@@ -47,25 +47,29 @@ class OrderStatusController extends Controller
             ]);
         } elseif ($request["type"] == 3) {
             $status = Status::where("type", 3)->first();
+            $relations = joinRelations::where("payment_method_id", $order_status->transactions->payment_method_id)->first();
+            $currency = ChangeCurrncy::where("currency", $relations->companies->currncy_type)->first();
+            $new_points = $request["value"] * $currency->points;
+
             $data = [
                 "order_id" => $order_status->order_id,
                 "status_id" => $status->id,
                 "type" => $order_status->type,
                 "before_operation" => $order_status->transactions->user->points,
-                "after_operation" => $order_status->transactions->user->points + $request["value"],
+                "after_operation" => $order_status->transactions->user->points + $new_points,
             ];
             if (array_key_exists("message", $request)) {
                 $data["message"] = $request["message"];
             }
             if (array_key_exists("value", $request)) {
                 $order_status->transactions->update([
-                    "value" => $request["value"]
+                    "value" => $new_points
                 ]);
             }
             $user_id =  $order_status->transactions->user_id;
             $user = User::find($user_id);
             $user->update([
-                "points" => $user->points + $request["value"]
+                "points" => $user->points + $new_points
             ]);
         } elseif ($request["type"] == 4) {
             $status = Status::where("type", 4)->first();
@@ -145,7 +149,7 @@ class OrderStatusController extends Controller
         }
         $transaction = Transaction::find($order_status->order_id);
         $transaction->update([
-            "last_order" => $order_status
+            "last_order" => $order_status->id
         ]);
         return  $this->send_response(200, "تم تغير حالة الطلب", [], OrderStatus::with("transactions")->find($new_order->id));
     }
