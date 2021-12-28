@@ -42,7 +42,13 @@ class AdminController extends Controller
                     continue;
                 } else {
                     $sort = $value == 'true' ? 'desc' : 'asc';
-                    $logs->orderBy($key,  $sort);
+
+                    if ($key == "transactions") {
+                        $logs->join('transactions', 'admin_logs.target_id', '=', 'transactions.id');
+                        $logs->orderBy('transactions.operation_number', $sort);
+                    } else {
+                        $logs->orderBy($key,  $sort);
+                    }
                 }
             }
         }
