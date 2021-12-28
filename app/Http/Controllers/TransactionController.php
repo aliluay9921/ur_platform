@@ -55,7 +55,13 @@ class TransactionController extends Controller
                     continue;
                 } else {
                     $sort = $value == 'true' ? 'desc' : 'asc';
-                    $transactions->orderBy($key,  $sort);
+                    if ($key == 'status') {
+                        $transactions->join('order_statuses', 'transactions.last_order', '=', 'order_statuses.id');
+                        $transactions->join('statuses', 'order_statuses.status_id', '=', 'statuses.id');
+                        $transactions->orderBy('statuses.type', $sort);
+                        return $transactions->get();
+                    } else
+                        $transactions->orderBy($key,  $sort);
                 }
             }
         }
@@ -118,8 +124,8 @@ class TransactionController extends Controller
         $request = $request->json()->all();
         $validator = Validator::make($request, [
             "payment_method_id" => "required|exists:payment_methods,id",
-            "value" => "required", // points 
-            "net_price" => "required", // net price 
+            "value" => "required", // points
+            "net_price" => "required", // net price
             "target" => "required"
         ]);
         if ($validator->fails()) {
@@ -149,7 +155,7 @@ class TransactionController extends Controller
 
                     if ($points == $request["value"]) {
                         if ($relations->companies->currncy_type == "points") {
-                            // transaction point on user to another 
+                            // transaction point on user to another
                             $to_user = User::where("user_name", $request["target"])->first();
                             $from_user = User::find($user->id);
                             $to_user->update([
