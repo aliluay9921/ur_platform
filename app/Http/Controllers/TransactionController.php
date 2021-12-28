@@ -68,9 +68,7 @@ class TransactionController extends Controller
                 if ($key == 'skip' || $key == 'limit' || $key == 'query' || $key == 'filter') {
                     continue;
                 } else {
-
                     $sort = $value == 'true' ? 'desc' : 'asc';
-<<<<<<< HEAD
                     // return $sort;
                     if ($key == "status") {
                         $transactions->join('order_statuses', 'transactions.last_order', '=', 'order_statuses.id');
@@ -79,15 +77,6 @@ class TransactionController extends Controller
                     } else {
                         $transactions->orderBy($key,  $sort);
                     }
-=======
-                    if ($key == 'status') {
-                        $transactions->join('order_statuses', 'transactions.last_order', '=', 'order_statuses.id');
-                        $transactions->join('statuses', 'order_statuses.status_id', '=', 'statuses.id');
-                        $transactions->orderBy('statuses.type', $sort);
-                        return $transactions->get();
-                    } else
-                        $transactions->orderBy($key,  $sort);
->>>>>>> d80468b794c7ad39708e111db7047d65ac20a017
                 }
             }
         }
