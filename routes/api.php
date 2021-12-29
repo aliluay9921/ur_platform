@@ -45,7 +45,7 @@ Route::middleware(['auth:api', 'restrict'])->group(function () {
 
         route::get("get_transactions", [TransactionController::class, "getTransactions"]);
         route::get("get_order_status_by_transactions", [OrderStatusController::class, "getOrderStatusByTransactions"]);
-
+        route::post("buy_card", [CardController::class, "buyCard"]);
         route::get("get_cards", [CardController::class, "getCards"]);
         route::get("get_companies", [CompanyController::class, "getCompanies"]);
         route::get("get_payment_methods", [PaymentMethodsController::class, "getPaymentMethods"]);
@@ -65,6 +65,7 @@ Route::middleware(['auth:api', 'restrict'])->group(function () {
         route::post("add_company", [CompanyController::class, "addCompany"]);
         route::post("add_payment_method", [PaymentMethodsController::class, "addPaymentMethod"]);
         route::post("add_card", [CardController::class, "addCard"]);
+        route::post("add_serial_card", [CardController::class, "addSerialCard"]);
         route::post("add_currency", [ChangeCurrncyController::class, "addCurrency"]);
         route::put("change_type_order_status", [OrderStatusController::class, "changeTypeOrderStatus"]);
 

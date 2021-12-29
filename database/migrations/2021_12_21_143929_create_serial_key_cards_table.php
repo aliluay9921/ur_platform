@@ -18,6 +18,7 @@ class CreateSerialKeyCardsTable extends Migration
             $table->uuid("card_id");
             $table->uuid("user_id")->nullable();
             $table->string("serial");
+            $table->boolean("used")->default(false);
             $table->timestamps();
         });
     }

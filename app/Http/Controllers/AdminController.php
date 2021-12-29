@@ -15,7 +15,7 @@ class AdminController extends Controller
 
     public function getAdminLogs()
     {
-        $logs = AdminLog::with("transactions", "transactions.last_order", "cards")->select("*");
+        $logs = AdminLog::with("transactions", "transactions.last_order", "cards", "cards.serial_keys")->select("*");
         if (isset($_GET['filter'])) {
             $filter = json_decode($_GET['filter']);
             $logs->where($filter->name, $filter->value);
@@ -24,7 +24,6 @@ class AdminController extends Controller
 
             $logs->where(function ($q) {
                 $columns = Schema::getColumnListing('admin_logs');
-
                 $q->whereHas("transactions", function ($q) {
                     $q->whereHas("user", function ($q) {
                         $q->where("user_name", 'LIKE', '%' . $_GET['query'] . '%');
