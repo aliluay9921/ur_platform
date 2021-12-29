@@ -43,9 +43,14 @@ class AdminController extends Controller
                 } else {
                     $sort = $value == 'true' ? 'desc' : 'asc';
 
-                    if ($key == "transactions") {
-                        $logs->join('transactions', 'admin_logs.target_id', '=', 'transactions.id');
-                        $logs->orderBy('transactions.operation_number', $sort);
+                    if ($key == "type") {
+                        $logs->join('transactions', 'admin_logs.target_id', '=', 'transactions.id')->select("admin_logs.*");
+                        $logs->orderBy('transactions.type', $sort);
+                    } elseif ($key == "status") {
+                        $logs->join('transactions', 'admin_logs.target_id', '=', 'transactions.id')->select("admin_logs.*");
+                        $logs->join('order_statuses', 'transactions.last_order', '=', 'order_statuses.id');
+                        $logs->join('statuses', 'order_statuses.status_id', '=', 'statuses.id');
+                        $logs->orderBy('statuses.type', $sort);
                     } else {
                         $logs->orderBy($key,  $sort);
                     }

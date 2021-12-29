@@ -71,7 +71,7 @@ class TransactionController extends Controller
                     $sort = $value == 'true' ? 'desc' : 'asc';
                     // return $sort;
                     if ($key == "status") {
-                        $transactions->join('order_statuses', 'transactions.last_order', '=', 'order_statuses.id');
+                        $transactions->join('order_statuses', 'transactions.last_order', '=', 'order_statuses.id')->select("transactions.*");
                         $transactions->join('statuses', 'order_statuses.status_id', '=', 'statuses.id');
                         $transactions->orderBy('statuses.type', $sort);
                     } else {
