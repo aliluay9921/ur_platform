@@ -121,4 +121,19 @@ class CompanyController extends Controller
         ]);
         return $this->send_response(200, "تم تغير حالة الشركة", [], Company::find($request["id"]));
     }
+
+    public function deleteCompany(Request $request)
+    {
+        $request = $request->json()->all();
+        $validator = Validator::make($request, [
+            "id" => "required|exists:companies,id",
+        ]);
+        if ($validator->fails()) {
+            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+        }
+
+        $company = Company::find($request["id"]);
+        $company->delete();
+        return $this->send_response(200, "تم حذف الشركة بنجاح", [], []);
+    }
 }

@@ -141,4 +141,33 @@ class PaymentMethodsController extends Controller
         ]);
         return $this->send_response(200, "تم التعديل على طريقة الدفع", [], PaymentMethod::find($request["id"]));
     }
+    public function deletePaymentMethod(Request $request)
+    {
+        $request = $request->json()->all();
+        $validator = Validator::make($request, [
+            "id" => "required|exists:payment_methods,id",
+        ]);
+        if ($validator->fails()) {
+            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+        }
+        $payment = PaymentMethod::find($request["id"]);
+        $payment->delete();
+        return $this->send_response(200, "تم الحذف بنجاح", [], []);
+    }
+    public function toggleActivePaymentMethod(Request $request)
+    {
+        $request = $request->json()->all();
+        $validator = Validator::make($request, [
+            "id" => "required|exists:payment_methods,id",
+        ]);
+        if ($validator->fails()) {
+            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+        }
+        $payment = PaymentMethod::find($request["id"]);
+        $payment->update([
+            "active" => !$payment->active
+        ]);
+
+        return $this->send_response(200, "تم تغير حاله طريقة الدفع", [], PaymentMethod::find($request["id"]));
+    }
 }

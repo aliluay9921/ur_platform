@@ -21,6 +21,17 @@ class CardController extends Controller
 
     public function getCards()
     {
+        if (isset($_GET["company_id"])) {
+            $cards = Card::whereHas("join_relations", function ($q) {
+                $q->whereHas("companies", function ($query) {
+                    $query->where("id", $_GET["company_id"])->where("active", 1);
+                });
+            })->WhereHas("serial_keys", function ($q) {
+                $q->where("used", false);
+            });
+            return $cards->get();
+        }
+
         $cards = Card::whereHas("join_relations", function ($q) {
             $q->whereHas("companies", function ($query) {
                 $query->where("active", 1);
@@ -179,5 +190,19 @@ class CardController extends Controller
         } else {
             return $this->send_response(200, "لا تمتلك رصيد كافي لشراء هذه البطاقة", [], []);
         }
+    }
+
+    public function deleteCard(Request $request)
+    {
+        $request = $request->json()->all();
+        $validator = Validator::make($request, [
+            "id" => "required|exists:cards,id",
+        ]);
+        if ($validator->fails()) {
+            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+        }
+        $card = Card::find($request["id"]);
+        $card->delete();
+        return $this->send_response(200, "تم حذف البطاقة بنجاح", [], []);
     }
 }
