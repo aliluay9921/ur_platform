@@ -38,16 +38,16 @@ class TransactionController extends Controller
     public function getTransactions()
     {
         if (auth()->user()->user_type == 2 || auth()->user()->user_type == 1) {
-            $transactions = Transaction::with("last_order");
+            $transactions = Transaction::with("last_status");
         } else {
-            $transactions = Transaction::with("last_order")->where("user_id", auth()->user()->id);
+            $transactions = Transaction::with("last_status")->where("user_id", auth()->user()->id);
         }
         if (isset($_GET['filter'])) {
             $filter = json_decode($_GET['filter']);
             // return $filter;
             if ($filter->name == "status") {
                 error_log("here");
-                $transactions->whereHas("last_order", function ($q) use ($filter) {
+                $transactions->whereHas("last_status", function ($q) use ($filter) {
                     $q->whereHas("status", function ($query)  use ($filter) {
                         $query->where("type", $filter->value);
                     });
