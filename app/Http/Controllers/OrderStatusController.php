@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AdminLog;
-use App\Models\ChangeCurrncy;
+use App\Models\User;
+use App\Models\Status;
 use App\Models\Company;
 use App\Models\Deposit;
-use App\Models\joinRelations;
-use App\Models\Status;
+use App\Models\AdminLog;
 use App\Traits\Pagination;
 use App\Models\OrderStatus;
 use App\Models\Transaction;
-use App\Models\User;
 use App\Traits\SendResponse;
 use Illuminate\Http\Request;
+use App\Models\ChangeCurrncy;
+use App\Models\joinRelations;
+use App\Models\Notifications;
 use Illuminate\Support\Facades\Validator;
 
 class OrderStatusController extends Controller
@@ -31,6 +32,12 @@ class OrderStatusController extends Controller
                 "status_id" => $status->id,
                 "type" => $order_status->type
             ];
+            Notifications::create([
+                "title" => "طلب اضافة نقاط الى حسابك تحت المراجعة",
+                "target_id" => $order_status->order_id,
+                "to_user" =>  $order_status->transactions->user_id,
+                "from_user" => auth()->user()->id
+            ]);
         } elseif ($request["type"] == 2) {
             $status = Status::where("type", 2)->first();
             $data = [
@@ -40,6 +47,12 @@ class OrderStatusController extends Controller
                 "before_operation" => $order_status->transactions->user->points,
                 "after_operation" => $order_status->transactions->user->points + $order_status->transactions->value,
             ];
+            Notifications::create([
+                "title" => "تم قبول طلب اضافة نقاط الى حسابك",
+                "target_id" => $order_status->order_id,
+                "to_user" =>  $order_status->transactions->user_id,
+                "from_user" => auth()->user()->id
+            ]);
             $user_id =  $order_status->transactions->user_id;
             $user = User::find($user_id);
             $user->update([
@@ -71,6 +84,13 @@ class OrderStatusController extends Controller
             $user->update([
                 "points" => $user->points + $new_points
             ]);
+            Notifications::create([
+                "title" => "تم قبول طلب تعبئة نقاط الى حسابك",
+                "body" => $request["message"],
+                "target_id" => $order_status->order_id,
+                "to_user" =>  $order_status->transactions->user_id,
+                "from_user" => auth()->user()->id
+            ]);
         } elseif ($request["type"] == 4) {
             $status = Status::where("type", 4)->first();
             // $data = [];
@@ -83,6 +103,13 @@ class OrderStatusController extends Controller
             if (array_key_exists("message", $request)) {
                 $data["message"] = $request["message"];
             }
+            Notifications::create([
+                "title" => "تم رفض طلب التعبئة ",
+                "body" => $request["message"],
+                "target_id" => $order_status->order_id,
+                "to_user" =>  $order_status->transactions->user_id,
+                "from_user" => auth()->user()->id
+            ]);
         }
         return   OrderStatus::create($data);
     }
@@ -97,6 +124,12 @@ class OrderStatusController extends Controller
                 "status_id" => $status->id,
                 "type" => $order_status->type
             ];
+            Notifications::create([
+                "title" => "تم سحب النقاط من حسابك تحت المراجعة",
+                "target_id" => $order_status->order_id,
+                "to_user" =>  $order_status->transactions->user_id,
+                "from_user" => auth()->user()->id
+            ]);
         } elseif ($request["type"] == 2) {
             $status = Status::where("type", 2)->first();
             $data = [
@@ -115,6 +148,12 @@ class OrderStatusController extends Controller
 
                 $data["admin_order"] = $request["admin_order"];
             }
+            Notifications::create([
+                "title" => "تم قبول طلب سحب النقاط من حسابك",
+                "target_id" => $order_status->order_id,
+                "to_user" =>  $order_status->transactions->user_id,
+                "from_user" => auth()->user()->id
+            ]);
         } elseif ($request["type"] == 4) {
             $status = Status::where("type", 4)->first();
             $data = [
@@ -126,6 +165,13 @@ class OrderStatusController extends Controller
             if (array_key_exists("message", $request)) {
                 $data["message"] = $request["message"];
             }
+            Notifications::create([
+                "title" => "تم رفض طلب سحب النقاط ",
+                "body" => $request["message"],
+                "target_id" => $order_status->order_id,
+                "to_user" =>  $order_status->transactions->user_id,
+                "from_user" => auth()->user()->id
+            ]);
         }
         return   OrderStatus::create($data);
     }
@@ -140,6 +186,7 @@ class OrderStatusController extends Controller
             return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
         }
         $order_status = OrderStatus::find($request["order_status_id"]);
+        // return $order_status;
         if ($order_status->type == 0) {
             $new_order = $this->depositChangeState($order_status, $request);
         } elseif ($order_status->type == 1) {
@@ -147,7 +194,7 @@ class OrderStatusController extends Controller
         }
         $transaction = Transaction::find($order_status->order_id);
         $transaction->update([
-            "last_order" => $order_status->id
+            "last_order" => $new_order->id
         ]);
         return  $this->send_response(200, "تم تغير حالة الطلب", [], OrderStatus::with("transactions")->find($new_order->id));
     }

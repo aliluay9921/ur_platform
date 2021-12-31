@@ -11,6 +11,7 @@ use App\Traits\SendResponse;
 use Illuminate\Http\Request;
 use App\Models\ChangeCurrncy;
 use App\Models\joinRelations;
+use App\Models\Notifications;
 use App\Models\PaymentMethod;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;

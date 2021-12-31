@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Image;
+use App\Models\Notifications;
 use App\Models\Ticket;
 use App\Models\TicketComment;
 use App\Traits\Pagination;
@@ -99,6 +100,9 @@ class TicketController extends Controller
             "user_id" => auth()->user()->id,
         ];
         $comment = TicketComment::create($data);
+        Notifications::create([
+            "title" => "تم اضافة تعليق على تذكرة خاصة بك"
+        ]);
         if (array_key_exists("image", $request)) {
             Image::create([
                 "target_id" => $comment->id,
