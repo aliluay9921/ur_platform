@@ -111,6 +111,10 @@ class OrderStatusController extends Controller
             $user->update([
                 "points" => $user->points - $order_status->transactions->value
             ]);
+            if (array_key_exists("admin_order", $request)) {
+
+                $data["admin_order"] = $request["admin_order"];
+            }
         } elseif ($request["type"] == 4) {
             $status = Status::where("type", 4)->first();
             $data = [

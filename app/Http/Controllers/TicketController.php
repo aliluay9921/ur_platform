@@ -128,4 +128,22 @@ class TicketController extends Controller
             return $this->send_response(400, "لايمكنك اغلاق تذكرة ليس لك", [], []);
         }
     }
+
+    public function deleteComment(Request $request)
+    {
+        $request = $request->json()->all();
+        $validator = Validator::make($request, [
+            "id" => "required|exists:ticket_comments,id"
+        ]);
+        if ($validator->fails()) {
+            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+        }
+        $comment = TicketComment::find($request["id"]);
+        if (auth()->user()->id == $comment->user_id || auth()->user()->user_type == 1 || auth()->user()->user_type == 2) {
+            $comment->delete();
+            return $this->send_response(200, "تم حذف التعليق بنجاح", [], []);
+        } else {
+            return $this->send_response(200, "لايمكنك حذف تعليق غير خاص بك", [], []);
+        }
+    }
 }

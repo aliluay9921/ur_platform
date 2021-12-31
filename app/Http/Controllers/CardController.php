@@ -21,27 +21,23 @@ class CardController extends Controller
 
     public function getCards()
     {
-        if (isset($_GET["company_id"])) {
-            $cards = Card::whereHas("join_relations", function ($q) {
-                $q->whereHas("companies", function ($query) {
-                    $query->where("id", $_GET["company_id"])->where("active", 1);
-                });
-            })->WhereHas("serial_keys", function ($q) {
-                $q->where("used", false);
-            });
-            return $cards->get();
-        }
 
         $cards = Card::whereHas("join_relations", function ($q) {
             $q->whereHas("companies", function ($query) {
                 $query->where("active", 1);
             });
-        })->WhereHas("serial_keys", function ($q) {
-            $q->where("used", false);
         });
         if (isset($_GET['filter'])) {
             $filter = json_decode($_GET['filter']);
-            $cards->where($filter->name, $filter->value);
+            if ($filter->name == "companies") {
+                $cards->whereHas("join_relations", function ($q) use ($filter) {
+                    $q->whereHas("companies", function ($query)  use ($filter) {
+                        $query->where("id", $filter->value);
+                    });
+                });
+            } else {
+                $cards->where($filter->name, $filter->value);
+            }
         }
         if (isset($_GET['query'])) {
             $cards->where(function ($q) {

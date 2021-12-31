@@ -44,7 +44,7 @@ class TransactionController extends Controller
         if (isset($_GET['filter'])) {
             $filter = json_decode($_GET['filter']);
             // return $filter;
-            if ($filter->type == 0) {
+            if ($filter->name == "status") {
                 error_log("here");
                 $transactions->whereHas("last_order", function ($q) use ($filter) {
                     $q->whereHas("status", function ($query)  use ($filter) {

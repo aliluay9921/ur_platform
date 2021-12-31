@@ -56,7 +56,7 @@ Route::middleware(['auth:api', 'restrict'])->group(function () {
         route::post("open_ticket", [TicketController::class, "openTicket"]);
         route::post("add_deposit", [TransactionController::class, "addDeposit"]);
         route::post("add_withdraw", [TransactionController::class, "addWithdraw"]);
-
+        route::delete("delete_comment", [TicketController::class, "deleteComment"]);
 
         route::put("close_ticket", [TicketController::class, "closeTicket"]);
         route::put("update_auth_user", [AuthController::class, "updateAuthUser"]);
