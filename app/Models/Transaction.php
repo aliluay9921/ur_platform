@@ -10,7 +10,7 @@ class Transaction extends Model
 {
     use HasFactory, Uuids;
     protected $guarded = [];
-    protected $with = ["user", "payment_method", "last_order"];
+    protected $with = ["user", "payment_method"];
 
 
     public function payment_method()
