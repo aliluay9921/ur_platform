@@ -28,6 +28,6 @@ class Transaction extends Model
     }
     public function last_status()
     {
-        return $this->hasOne(OrderStatus::class, "order_id", "last_order");
+        return $this->hasOne(OrderStatus::class, "id", "last_order");
     }
 }
