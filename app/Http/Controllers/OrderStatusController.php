@@ -142,14 +142,8 @@ class OrderStatusController extends Controller
         $order_status = OrderStatus::find($request["order_status_id"]);
         if ($order_status->type == 0) {
             $new_order = $this->depositChangeState($order_status, $request);
-            AdminLog::create([
-                "target_id" => $order_status->order_id,
-            ]);
         } elseif ($order_status->type == 1) {
             $new_order = $this->withdrawChangeState($order_status, $request);
-            AdminLog::create([
-                "target_id" => $order_status->order_id,
-            ]);
         }
         $transaction = Transaction::find($order_status->order_id);
         $transaction->update([
