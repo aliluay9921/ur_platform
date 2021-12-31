@@ -10,7 +10,7 @@ class Transaction extends Model
 {
     use HasFactory, Uuids;
     protected $guarded = [];
-    protected $with = ["user", "payment_method"];
+    protected $with = ["user", "payment_method", "last_status"];
 
 
     public function payment_method()
@@ -26,7 +26,7 @@ class Transaction extends Model
     {
         return $this->hasMany(OrderStatus::class, 'order_id');
     }
-    public function last_order()
+    public function last_status()
     {
         return $this->hasOne(OrderStatus::class, "order_id", "last_order");
     }
