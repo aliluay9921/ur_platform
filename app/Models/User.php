@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use App\Models\Country;
 
 class User extends Authenticatable
 {
@@ -52,6 +53,10 @@ class User extends Authenticatable
     public function tickets()
     {
         return $this->hasMany(Ticket::class, 'user_id');
+    }
+    public function country()
+    {
+        return $this->hasOne(Country::class, 'id');
     }
     public function ticket_comments()
     {
