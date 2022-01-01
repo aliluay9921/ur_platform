@@ -56,7 +56,7 @@ class User extends Authenticatable
     }
     public function country()
     {
-        return $this->hasOne(Country::class, 'id');
+        return $this->hasOne(Country::class, 'id','country_id');
     }
     public function ticket_comments()
     {
