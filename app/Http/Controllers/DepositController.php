@@ -44,7 +44,7 @@ class DepositController extends Controller
             "payment_method_id" => "required|exists:payment_methods,id"
         ]);
         if ($validator->fails()) {
-            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $data = [];
         $data = [

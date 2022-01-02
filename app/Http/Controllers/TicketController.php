@@ -23,7 +23,7 @@ class TicketController extends Controller
             "body" => "required",
         ]);
         if ($validator->fails()) {
-            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $data = [];
         $data = [
@@ -91,7 +91,7 @@ class TicketController extends Controller
             "ticket_id" => "required|exists:tickets,id"
         ]);
         if ($validator->fails()) {
-            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $data = [];
         $data = [
@@ -101,7 +101,11 @@ class TicketController extends Controller
         ];
         $comment = TicketComment::create($data);
         Notifications::create([
-            "title" => "تم اضافة تعليق على تذكرة خاصة بك"
+            "title" => "تم اضافة تعليق على تذكرة خاصة بك",
+            "body" => $request["body"],
+            "target_id" => $comment->id,
+            "to_user" => $comment->user_id,
+            "from_user" => auth()->user()->id
         ]);
         if (array_key_exists("image", $request)) {
             Image::create([
@@ -120,13 +124,21 @@ class TicketController extends Controller
             "ticket_id" => "required|exists:tickets,id"
         ]);
         if ($validator->fails()) {
-            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $ticket = Ticket::find($request["ticket_id"]);
         if (auth()->user()->id == $ticket->user_id || auth()->user()->user_type == 1 || auth()->user()->user_type == 2) {
             $ticket->update([
                 "active" => false
             ]);
+            if (auth()->user()->id != $ticket->user_id) {
+                Notifications::create([
+                    "title" => "تم اغلاق التذكرة الخاصة بك",
+                    "target_id" => $ticket->id,
+                    "to_user" => $ticket->user_id,
+                    "from_user" => auth()->user()->id
+                ]);
+            }
             return $this->send_response(200, "تم اغلاق التذكرة بنجاح", [], Ticket::find($request["ticket_id"]));
         } else {
             return $this->send_response(400, "لايمكنك اغلاق تذكرة ليس لك", [], []);
@@ -140,7 +152,7 @@ class TicketController extends Controller
             "id" => "required|exists:ticket_comments,id"
         ]);
         if ($validator->fails()) {
-            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $comment = TicketComment::find($request["id"]);
         if (auth()->user()->id == $comment->user_id || auth()->user()->user_type == 1 || auth()->user()->user_type == 2) {

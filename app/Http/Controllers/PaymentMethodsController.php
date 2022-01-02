@@ -75,7 +75,7 @@ class PaymentMethodsController extends Controller
             "company_id.required" => "يرجى تحديد الشركة",
         ]);
         if ($validator->fails()) {
-            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $data = [];
         $data = [
@@ -114,7 +114,7 @@ class PaymentMethodsController extends Controller
 
         ]);
         if ($validator->fails()) {
-            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $data = [
             "tax" => $request["tax"],
@@ -148,7 +148,7 @@ class PaymentMethodsController extends Controller
             "id" => "required|exists:payment_methods,id",
         ]);
         if ($validator->fails()) {
-            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $payment = PaymentMethod::find($request["id"]);
         $payment->delete();
@@ -161,7 +161,7 @@ class PaymentMethodsController extends Controller
             "id" => "required|exists:payment_methods,id",
         ]);
         if ($validator->fails()) {
-            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $payment = PaymentMethod::find($request["id"]);
         $payment->update([

@@ -53,7 +53,7 @@ class ChangeCurrncyController extends Controller
             "points" => "required"
         ]);
         if ($validator->fails()) {
-            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
 
         $currncy =  ChangeCurrncy::create([
@@ -72,7 +72,7 @@ class ChangeCurrncyController extends Controller
             "points" => "required"
         ]);
         if ($validator->fails()) {
-            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $currncy =  ChangeCurrncy::find($request["id"]);
         $currncy->update([
@@ -89,7 +89,7 @@ class ChangeCurrncyController extends Controller
             "id" => "required|exists:change_currncies,id",
         ]);
         if ($validator->fails()) {
-            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         ChangeCurrncy::find($request["id"])->delete();
         return $this->send_response(200, "تم حذف العملة بنجاح", [], []);

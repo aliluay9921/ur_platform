@@ -63,7 +63,7 @@ class CompanyController extends Controller
             "image" => "required"
         ]);
         if ($validator->fails()) {
-            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $company = Company::create([
             "name_ar" => $request["name_ar"],
@@ -88,7 +88,7 @@ class CompanyController extends Controller
             "currncy_type" => "required",
         ]);
         if ($validator->fails()) {
-            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $data = [];
         $data = [
@@ -113,7 +113,7 @@ class CompanyController extends Controller
             "id" => "required|exists:companies,id",
         ]);
         if ($validator->fails()) {
-            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $company = Company::find($request["id"]);
         $company->update([
@@ -129,7 +129,7 @@ class CompanyController extends Controller
             "id" => "required|exists:companies,id",
         ]);
         if ($validator->fails()) {
-            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
 
         $company = Company::find($request["id"]);

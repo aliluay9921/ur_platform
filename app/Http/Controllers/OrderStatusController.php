@@ -183,7 +183,7 @@ class OrderStatusController extends Controller
             "type" => "required" // type of status change 
         ]);
         if ($validator->fails()) {
-            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $order_status = OrderStatus::find($request["order_status_id"]);
         // return $order_status;

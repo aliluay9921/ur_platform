@@ -40,7 +40,7 @@ class AuthController extends Controller
             'password.required' => 'يرجى ادخال كلمة المرور ',
         ]);
         if ($validator->fails()) {
-            return $this->send_response(401, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(401, trans("message.error.key"), $validator->errors(), []);
         }
         $fieldType = filter_var($request['user_name'], FILTER_VALIDATE_EMAIL) ? 'email' : 'user_name';
 
@@ -81,7 +81,7 @@ class AuthController extends Controller
             ],
 
         ], [
-            'first_name.required' => ' يرجى ادخال الاسم الاؤل  ',
+            'first_name.required' => 'يرجى ادخال الاسم الاؤل ',
             'user_name.required' => ' يرجى ادخال اسم المستخدم ',
             'user_name.unique' => ' اسم المستخدم مستخدم سابقاً ',
             'email.required' => ' يرجى ادخال البريدالالكتروني ',
@@ -92,12 +92,9 @@ class AuthController extends Controller
             'password.regex' => '  كلمة المرور ضعيفة يجب ان تحتوي على احرف صغيرة واحرف كبيرة وارقام  ',
             'password.same' => 'كلمتا المرور غير متطابقة',
             'confirm_password.required' => 'يرجى ملئ هذا الحقل للتأكيد ',
-
-
-
         ]);
         if ($validator->fails()) {
-            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $data = [];
         $data = [
@@ -106,10 +103,12 @@ class AuthController extends Controller
             'email' => $request['email'],
             'password' => bcrypt($request['password']),
             'user_type' => 0,
-            // 'code' => substr(str_shuffle("0123456789ABCD"), 0, 6),
         ];
         if (array_key_exists("phone_number", $request)) {
             $data["phone_number"] = $request["phone_number"];
+        }
+        if (array_key_exists("country_code", $request)) {
+            $data["country_code"] = $request["country_code"];
         }
         if (array_key_exists("last_name", $request)) {
             $data["last_name"] = $request["last_name"];
@@ -147,7 +146,7 @@ class AuthController extends Controller
             'code.required' => 'يرجى ادخال رمز التفعيل الخاص بك'
         ]);
         if ($validator->fails()) {
-            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $user = auth()->user();
         if ($user->active == true) {
@@ -182,7 +181,7 @@ class AuthController extends Controller
                 'email.exists' => 'يرجى ادخال بريد الكتروني صالح'
             ]);
             if ($validator->fails()) {
-                return $this->send_response(401, 'خطأ بالمدخلات', $validator->errors(), []);
+                return $this->send_response(401, trans("message.error.key"), $validator->errors(), []);
             }
             $user = User::where('email', $request['email'])->first();
             $code = UserCode::create([
@@ -226,7 +225,7 @@ class AuthController extends Controller
                 'password.same' => 'كلمتا المرور غير متطابقة',
             ]);
             if ($validator->fails()) {
-                return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+                return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
             }
             $code = UserCode::where("code", $request["code"])->first();
             if ($code) {
@@ -253,11 +252,10 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users,email,' . $user_id,
             'user_name' => 'required|unique:users,user_name,' . $user_id,
             'first_name' => 'required',
-            'phone_number' => 'min:10|max:11',
 
         ]);
         if ($validator->fails()) {
-            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $info = [];
         $info = [
@@ -267,6 +265,9 @@ class AuthController extends Controller
         ];
         if (array_key_exists("phone_number", $request)) {
             $info["phone_number"] = $request["phone_number"];
+        }
+        if (array_key_exists("country_code", $request)) {
+            $data["country_code"] = $request["country_code"];
         }
         if (array_key_exists("last_name", $request)) {
             $info["last_name"] = $request["last_name"];
@@ -289,7 +290,7 @@ class AuthController extends Controller
             "user_id" => "required|exists:users,id"
         ]);
         if ($validator->fails()) {
-            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
 
         $user = User::find($request["user_id"]);
@@ -330,5 +331,67 @@ class AuthController extends Controller
             $_GET['limit'] = 10;
         $res = $this->paging($countries,  $_GET['skip'],  $_GET['limit']);
         return $this->send_response(200, 'تم جلب الدول بنجاح ', [], $res["model"], null, $res["count"]);
+    }
+
+    public function changeEmail(Request $request)
+    {
+        $request = $request->json()->all();
+        if (array_key_exists("email", $request) && !array_key_exists("code", $request)) {
+            $validator = Validator::make($request, [
+                "email" => "required|email|unique:users,id"
+            ]);
+            if ($validator->fails()) {
+                return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
+            }
+            $code =  UserCode::create([
+                "user_id" => auth()->user()->id,
+                "email" => $request["email"],
+                "code" => $this->random_code(),
+                "type" => 3
+            ]);
+            $details = [
+                'title' => 'هو رمز التحقق من عملية تغير البريد الالكتروني الخاص بك في منصة اؤر الالكترونية',
+                'body' =>  $code->code
+            ];
+
+            \Mail::to($request["email"])->send(new ActivationMail($details));
+            $details_old = [
+                'title' => 'انتباه',
+                'body' => 'سوف يتم تغير البريد الالكتروني الخاص بك في منصة اؤر الالكترونية'
+            ];
+
+            \Mail::to(auth()->user()->email)->send(new ActivationMail($details_old));
+            return $this->send_response(200, 'تم ارسال الرمز لتغير البريد الالكتروني', [], []);
+        } else if (array_key_exists("email", $request) && array_key_exists("code", $request)) {
+            $validator = Validator::make($request, [
+                "email" => "required|email|unique:users,id",
+                "code" => "required|exists:user_codes,code"
+            ]);
+            if ($validator->fails()) {
+                return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
+            }
+            $info = UserCode::where("user_id", auth()->user()->id)->where("email", $request["email"])->where("code", $request["code"])->where("type", 3)->first();
+            if ($info) {
+                User::find(auth()->user()->id)->update([
+                    "email" => $info->email,
+                ]);
+                $info->delete();
+                return $this->send_response(200, "تم تغيرر البريد الالكتروني بنجاح", [], User::find(auth()->user()->id));
+            } else {
+                return $this->send_response(200, "يرجى التأكد من المعلومات جيداً", [], []);
+            }
+        }
+    }
+
+    public function checkUserName(Request $request)
+    {
+        $request = $request->json()->all();
+        $validator = Validator::make($request, [
+            "user_name" => "required|unique:users,user_name"
+        ]);
+        if ($validator->fails()) {
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
+        }
+        return $this->send_response(200, "اسم المستخدم صالح للأستخدام", [], []);
     }
 }

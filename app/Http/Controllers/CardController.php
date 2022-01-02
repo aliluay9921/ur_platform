@@ -67,7 +67,7 @@ class CardController extends Controller
         if (!isset($_GET['limit']))
             $_GET['limit'] = 10;
         $res = $this->paging($cards,  $_GET['skip'],  $_GET['limit']);
-        return $this->send_response(200, 'تم جلب الكروت بنجاح ', [], $res["model"], null, $res["count"]);
+        return $this->send_response(200, trans("message.get.cards"), [], $res["model"], null, $res["count"]);
     }
 
     public function addCard(Request $request)
@@ -78,16 +78,10 @@ class CardController extends Controller
             "card_sale" => "required",
             "value" => "required",
             "points" => "required",
-
             "company_id" => "required|exists:companies,id",
-        ], [
-            "card_sale.required" => "يرجى ادخال سعر الشراء",
-            "value.required" => "يرجى ادخال سعر البيع",
-            "points.required" => "يرجى ادخال قيمة النقاط ",
-            "company_id.required" => "يرجى تحديد الشركة",
         ]);
         if ($validator->fails()) {
-            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $data = [];
         $data = [
@@ -111,7 +105,7 @@ class CardController extends Controller
             "serial" => "required"
         ]);
         if ($validator->fails()) {
-            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $serial = SerialKeyCard::create([
             "card_id" => $request["card_id"],
@@ -129,13 +123,9 @@ class CardController extends Controller
             "points" => "required",
             "company_id" => "exists:companies,id",
 
-        ], [
-            "card_sale.required" => "يرجى ادخال سعر الشراء",
-            "value.required" => "يرجى ادخال سعر البيع",
-            "points.required" => "يرجى ادخال قيمة النقاط ",
         ]);
         if ($validator->fails()) {
-            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $data = [];
         $data = [
@@ -162,7 +152,7 @@ class CardController extends Controller
             "card_id" => "required|exists:cards,id",
         ]);
         if ($validator->fails()) {
-            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $card = Card::with("serial_keys")->find($request["card_id"]);
         $user = User::find(auth()->user()->id);
@@ -180,9 +170,9 @@ class CardController extends Controller
                     "target_id" => $card->id
                 ]);
             } else {
-                return $this->send_response(200, "عذراً لايوجد بطاقات متوفرة حالياً", [], []);
+                return $this->send_response(200, trans("message.empty.cards"), [], []);
             }
-            return $this->send_response(200, "تم شراء الكارت بنجاح", [], SerialKeyCard::find($get_serial->id));
+            return $this->send_response(200, trans("message.buy.cards"), [], SerialKeyCard::find($get_serial->id));
         } else {
             return $this->send_response(200, "لا تمتلك رصيد كافي لشراء هذه البطاقة", [], []);
         }
@@ -195,7 +185,7 @@ class CardController extends Controller
             "id" => "required|exists:cards,id",
         ]);
         if ($validator->fails()) {
-            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $card = Card::find($request["id"]);
         $card->delete();

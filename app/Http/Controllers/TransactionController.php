@@ -86,7 +86,7 @@ class TransactionController extends Controller
         if (!isset($_GET['limit']))
             $_GET['limit'] = 10;
         $res = $this->paging($transactions,  $_GET['skip'],  $_GET['limit']);
-        return $this->send_response(200, 'تم جلب التحويلات بنجاح ', [], $res["model"], null, $res["count"]);
+        return $this->send_response(200, trans("message.get.transactions"), [], $res["model"], null, $res["count"]);
     }
 
     public function addDeposit(Request $request)
@@ -99,7 +99,7 @@ class TransactionController extends Controller
             "payment_method_id" => "required|exists:payment_methods,id"
         ]);
         if ($validator->fails()) {
-            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $data = [];
         $data = [
@@ -145,7 +145,7 @@ class TransactionController extends Controller
             "target" => "required"
         ]);
         if ($validator->fails()) {
-            return $this->send_response(400, 'خطأ بالمدخلات', $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $data = [];
         $data = [
