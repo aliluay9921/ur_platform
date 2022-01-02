@@ -249,7 +249,6 @@ class AuthController extends Controller
         $request = $request->json()->all();
         $user_id = auth()->user()->id;
         $validator = Validator::make($request, [
-            'email' => 'required|email|unique:users,email,' . $user_id,
             'user_name' => 'required|unique:users,user_name,' . $user_id,
             'first_name' => 'required',
 
