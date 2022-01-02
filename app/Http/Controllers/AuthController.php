@@ -265,7 +265,7 @@ class AuthController extends Controller
             $info["phone_number"] = $request["phone_number"];
         }
         if (array_key_exists("country_code", $request)) {
-            $data["country_code"] = $request["country_code"];
+            $info["country_code"] = $request["country_code"];
         }
         if (array_key_exists("last_name", $request)) {
             $info["last_name"] = $request["last_name"];
