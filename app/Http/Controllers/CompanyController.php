@@ -51,7 +51,7 @@ class CompanyController extends Controller
         if (!isset($_GET['limit']))
             $_GET['limit'] = 10;
         $res = $this->paging($companies,  $_GET['skip'],  $_GET['limit']);
-        return $this->send_response(200, 'تم جلب الشركات بنجاح', [], $res["model"], null, $res["count"]);
+        return $this->send_response(200, trans("message.get.companies"), [], $res["model"], null, $res["count"]);
     }
     public function addCompany(Request $request)
     {

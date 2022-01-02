@@ -27,8 +27,6 @@ class AddSoftDeletsToPaymentMethodsTable extends Migration
     public function down()
     {
         Schema::table('payment_methods', function (Blueprint $table) {
-            $table->dropColumn('deleted_at');
-            $table->dropColumn("active");
         });
     }
 }

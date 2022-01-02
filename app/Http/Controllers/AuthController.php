@@ -336,7 +336,7 @@ class AuthController extends Controller
         $request = $request->json()->all();
         if (array_key_exists("email", $request) && !array_key_exists("code", $request)) {
             $validator = Validator::make($request, [
-                "email" => "required|email|unique:users,id"
+                "email" => "required|email|unique:users,email"
             ]);
             if ($validator->fails()) {
                 return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
@@ -362,7 +362,7 @@ class AuthController extends Controller
             return $this->send_response(200, 'تم ارسال الرمز لتغير البريد الالكتروني', [], []);
         } else if (array_key_exists("email", $request) && array_key_exists("code", $request)) {
             $validator = Validator::make($request, [
-                "email" => "required|email|unique:users,id",
+                "email" => "required|email|unique:users,email",
                 "code" => "required|exists:user_codes,code"
             ]);
             if ($validator->fails()) {

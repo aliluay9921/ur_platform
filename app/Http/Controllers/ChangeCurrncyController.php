@@ -43,7 +43,7 @@ class ChangeCurrncyController extends Controller
         if (!isset($_GET['limit']))
             $_GET['limit'] = 10;
         $res = $this->paging($currencies,  $_GET['skip'],  $_GET['limit']);
-        return $this->send_response(200, 'تم جلب  العملات بنجاح ', [], $res["model"], null, $res["count"]);
+        return $this->send_response(200, trans("message.get.cuurency"), [], $res["model"], null, $res["count"]);
     }
     public function addCurrency(Request $request)
     {

@@ -88,6 +88,9 @@ class PaymentMethodsController extends Controller
         if (array_key_exists("key", $request)) {
             $data["key"] = $request["key"];
         }
+        if (array_key_exists("min_value", $request)) {
+            $data["min_value"] = $request["min_value"];
+        }
         if (array_key_exists("order_key_type_id", $request)) {
             $data["order_key_type_id"] = $request["order_key_type_id"];
         }

@@ -128,11 +128,9 @@ class TransactionController extends Controller
                 "target_id" => $deposit->id
             ]);
         } else {
-            return $this->send_response(400, "يجب تحويل قيمة اكبر من" . ' $' . $payments->min_value, [], []);
+            return $this->send_response(400, trans("message.limit.transactions") . ' $' . $payments->min_value, [], []);
         }
-
-
-        return $this->send_response(200, "طلب الايداع بأنتضار المراجعة", [], Transaction::find($deposit->id));
+        return $this->send_response(200, trans("message.add.deposit"), [], Transaction::find($deposit->id));
     }
 
     public function addWithdraw(Request $request)
@@ -192,7 +190,7 @@ class TransactionController extends Controller
                                 "after_operation" => $from_user->points - $request["value"],
                                 "before_operation" => $from_user->points,
                             ]);
-                            return $this->send_response(200, "تمت عملية تحويل الرصيد بنجاح", [], Transaction::find($transactions_points->id));
+                            return $this->send_response(200, trans("message.translate.points"), [], Transaction::find($transactions_points->id));
                         } else {
                             $withdraw = Transaction::create($data);
                             $status = Status::where("type", 0)->first();
@@ -207,19 +205,19 @@ class TransactionController extends Controller
                             AdminLog::create([
                                 "target_id" => $withdraw->id
                             ]);
-                            return $this->send_response(200, "طلب سحب الاموال بأنتضار المراجعة", [], Transaction::find($withdraw->id));
+                            return $this->send_response(200, trans("message.withdraw.review"), [], Transaction::find($withdraw->id));
                         }
                     } else {
-                        return $this->send_response(400, "لتصير لوتي براسي حبيبي", [], []);
+                        return $this->send_response(400, trans("message.withdraw.error"), [], []);
                     }
                 } else {
-                    return $this->send_response(400, "يرجى سحب قيمة موجود في حسابك", [], []);
+                    return $this->send_response(400, trans("message.withdraw.check.points"), [], []);
                 }
             } else {
-                return $this->send_response(400, "لايمكنك ادخال قيم عشرية", [], []);
+                return $this->send_response(400, trans("message.withdraw.check.integer.points"), [], []);
             }
         } else {
-            return $this->send_response(400, "يجب تحويل قيمة اكبر من" . ' $' . $payments->min_value, [], []);
+            return $this->send_response(400, trans("message.limit.transactions") . ' $' . $payments->min_value, [], []);
         }
     }
 }

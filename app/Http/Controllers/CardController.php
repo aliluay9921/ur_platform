@@ -174,7 +174,7 @@ class CardController extends Controller
             }
             return $this->send_response(200, trans("message.buy.cards"), [], SerialKeyCard::find($get_serial->id));
         } else {
-            return $this->send_response(200, "لا تمتلك رصيد كافي لشراء هذه البطاقة", [], []);
+            return $this->send_response(200, trans("message.enough.balance"), [], []);
         }
     }
 

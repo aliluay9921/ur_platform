@@ -33,7 +33,7 @@ class OrderStatusController extends Controller
                 "type" => $order_status->type
             ];
             Notifications::create([
-                "title" => "طلب اضافة نقاط الى حسابك تحت المراجعة",
+                "title" => trans("message.notification.transactions.deposit.review"),
                 "target_id" => $order_status->order_id,
                 "to_user" =>  $order_status->transactions->user_id,
                 "from_user" => auth()->user()->id
@@ -48,7 +48,7 @@ class OrderStatusController extends Controller
                 "after_operation" => $order_status->transactions->user->points + $order_status->transactions->value,
             ];
             Notifications::create([
-                "title" => "تم قبول طلب اضافة نقاط الى حسابك",
+                "title" => trans("message.notification.transactions.deposit.accept"),
                 "target_id" => $order_status->order_id,
                 "to_user" =>  $order_status->transactions->user_id,
                 "from_user" => auth()->user()->id
@@ -85,7 +85,7 @@ class OrderStatusController extends Controller
                 "points" => $user->points + $new_points
             ]);
             Notifications::create([
-                "title" => "تم قبول طلب تعبئة نقاط الى حسابك",
+                "title" => trans("message.notification.transactions.deposit.accept"),
                 "body" => $request["message"],
                 "target_id" => $order_status->order_id,
                 "to_user" =>  $order_status->transactions->user_id,
@@ -104,7 +104,7 @@ class OrderStatusController extends Controller
                 $data["message"] = $request["message"];
             }
             Notifications::create([
-                "title" => "تم رفض طلب التعبئة ",
+                "title" => trans("message.notification.transactions.deposit.reject"),
                 "body" => $request["message"],
                 "target_id" => $order_status->order_id,
                 "to_user" =>  $order_status->transactions->user_id,
@@ -125,7 +125,7 @@ class OrderStatusController extends Controller
                 "type" => $order_status->type
             ];
             Notifications::create([
-                "title" => "تم سحب النقاط من حسابك تحت المراجعة",
+                "title" => trans("message.notification.transactions.withdraw.review"),
                 "target_id" => $order_status->order_id,
                 "to_user" =>  $order_status->transactions->user_id,
                 "from_user" => auth()->user()->id
@@ -149,7 +149,7 @@ class OrderStatusController extends Controller
                 $data["admin_order"] = $request["admin_order"];
             }
             Notifications::create([
-                "title" => "تم قبول طلب سحب النقاط من حسابك",
+                "title" => trans("message.notification.transactions.withdraw.accept"),
                 "target_id" => $order_status->order_id,
                 "to_user" =>  $order_status->transactions->user_id,
                 "from_user" => auth()->user()->id
@@ -166,7 +166,7 @@ class OrderStatusController extends Controller
                 $data["message"] = $request["message"];
             }
             Notifications::create([
-                "title" => "تم رفض طلب سحب النقاط ",
+                "title" => trans("message.notification.transactions.withdraw.reject"),
                 "body" => $request["message"],
                 "target_id" => $order_status->order_id,
                 "to_user" =>  $order_status->transactions->user_id,

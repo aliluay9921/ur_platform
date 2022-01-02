@@ -61,16 +61,6 @@ class DepositController extends Controller
             "status_id" => $status->id,
             "type" => 0
         ]);
-        // $company = joinRelations::where("payment_method_id", $request["payment_method_id"])->first();
-        // $company_currency = $company->companies->currncy_type;
-        // $currency = ChangeCurrncy::where("currency", $company_currency)->first();
-        // $points = $currency->points * $request["value"];
-
-        // $user = User::find(auth()->user()->id);
-        // $user->update([
-        //     "points" => $user->points + $points
-        // ]);
-        // return User::find(auth()->user()->id);
         return $this->send_response(200, "طلب الايداع بأنتضار المراجعة", [], Deposit::find($deposit->id));
     }
 }
