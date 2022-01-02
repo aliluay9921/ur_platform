@@ -258,7 +258,6 @@ class AuthController extends Controller
         }
         $info = [];
         $info = [
-            "email" => $request["email"],
             "user_name" => $request["user_name"],
             "first_name" => $request["first_name"],
         ];
