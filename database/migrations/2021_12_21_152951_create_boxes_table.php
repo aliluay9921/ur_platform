@@ -15,7 +15,10 @@ class CreateBoxesTable extends Migration
     {
         Schema::create('boxes', function (Blueprint $table) {
             $table->uuid("id")->primary();
-            $table->double("Value");
+            $table->double("total_value")->default(0);
+            $table->double("company_ratio")->default(0);
+            $table->double("programmer_ratio")->default(0);
+            $table->double("managment_ratio")->default(0);
             $table->timestamps();
         });
     }

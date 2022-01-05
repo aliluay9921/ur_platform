@@ -164,14 +164,15 @@ class TransactionController extends Controller
                     $currency =  ChangeCurrncy::where("currency", $relations->companies->currncy_type)->first();
                     $system_tax =  ($relations->payment_methods->tax / 100);
                     $company_tax = ($relations->payment_methods->company_tax  / 100);
-                    $new_curreny_point = ceil($request["net_price"] / (1 - $system_tax - $company_tax));
-                    $points = $new_curreny_point * $currency->points;
+                    $new_currecny_point = ceil($request["net_price"] / (1 - $system_tax - $company_tax));
+                    $points = $new_currecny_point * $currency->points;
 
                     if ($points == $request["value"]) {
                         if ($relations->companies->currncy_type == "points") {
                             // transaction point on user to another
                             $to_user = User::where("user_name", $request["target"])->first();
                             $from_user = User::find($user->id);
+                            // if ($from_user->points)
                             $to_user->update([
                                 "points" => $to_user->points + $request["value"]
                             ]);
@@ -205,6 +206,7 @@ class TransactionController extends Controller
                             AdminLog::create([
                                 "target_id" => $withdraw->id
                             ]);
+
                             return $this->send_response(200, trans("message.withdraw.review"), [], Transaction::find($withdraw->id));
                         }
                     } else {

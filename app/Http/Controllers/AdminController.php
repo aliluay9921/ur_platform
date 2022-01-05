@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AdminLog;
+use App\Models\OrderKeyType;
 use App\Models\User;
 use App\Traits\Pagination;
 use App\Traits\SendResponse;
@@ -96,5 +97,38 @@ class AdminController extends Controller
             $_GET['limit'] = 10;
         $res = $this->paging($users,  $_GET['skip'],  $_GET['limit']);
         return $this->send_response(200, 'تم جلب ألمستخدمين بنجاح ', [], $res["model"], null, $res["count"]);
+    }
+    public function getOrderKeyTypes()
+    {
+        $get = OrderKeyType::select('*');
+        if (isset($_GET['filter'])) {
+            $filter = json_decode($_GET['filter']);
+            $get->where($filter->name, $filter->value);
+        }
+        if (isset($_GET['query'])) {
+
+            $get->where(function ($q) {
+                $columns = Schema::getColumnListing('order_key_types');
+                foreach ($columns as $column) {
+                    $q->orWhere($column, 'LIKE', '%' . $_GET['query'] . '%');
+                }
+            });
+        }
+        if (isset($_GET)) {
+            foreach ($_GET as $key => $value) {
+                if ($key == 'skip' || $key == 'limit' || $key == 'query' || $key == 'filter') {
+                    continue;
+                } else {
+                    $sort = $value == 'true' ? 'desc' : 'asc';
+                    $get->orderBy($key,  $sort);
+                }
+            }
+        }
+        if (!isset($_GET['skip']))
+            $_GET['skip'] = 0;
+        if (!isset($_GET['limit']))
+            $_GET['limit'] = 10;
+        $res = $this->paging($get,  $_GET['skip'],  $_GET['limit']);
+        return $this->send_response(200, 'تم جلب العنصر بنجاح', [], $res["model"], null, $res["count"]);
     }
 }

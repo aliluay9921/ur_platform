@@ -60,7 +60,7 @@ class CompanyController extends Controller
             "name_ar" => "required",
             "name_en" => "required",
             "currncy_type" => "required",
-            "image" => "required"
+            "images" => "required"
         ]);
         if ($validator->fails()) {
             return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
@@ -70,10 +70,14 @@ class CompanyController extends Controller
             "name_en" => $request["name_en"],
             "currncy_type" => $request["currncy_type"],
         ]);
-        Image::create([
-            "target_id" => $company->id,
-            "image" => $this->uploadPicture($request["image"], '/images/companies_image/')
-        ]);
+        if (array_key_exists("images", $request)) {
+            foreach ($request["images"] as $image) {
+                Image::create([
+                    "target_id" => $company->id,
+                    "image" => $this->uploadPicture($image, '/images/companies_image/')
+                ]);
+            }
+        }
 
         return $this->send_response(200, "تم انشاء شركة جديدة بنجاح", [], Company::find($company->id));
     }
@@ -96,16 +100,10 @@ class CompanyController extends Controller
             "name_en" => $request["name_en"],
             "currncy_type" => $request["currncy_type"],
         ];
-        if (array_key_exists("new_image", $request)) {
-            $image = Image::where("target_id", $request["id"])->first();
-            $image->update([
-                "image" => $this->uploadPicture($request["new_image"], "/images/companies_image/")
-            ]);
-        }
+
         Company::find($request["id"])->update($data);
         return $this->send_response(200, "تم التعديل على الشركة بنجاح", [], Company::find($request["id"]));
     }
-
     public function toggleActiveCompany(Request $request)
     {
         $request = $request->json()->all();
@@ -135,5 +133,34 @@ class CompanyController extends Controller
         $company = Company::find($request["id"]);
         $company->delete();
         return $this->send_response(200, "تم حذف الشركة بنجاح", [], []);
+    }
+
+    public function editImage(Request $request)
+    {
+        $request = $request->json()->all();
+        $validator = Validator::make($request, [
+            "images_id.*" => 'exists:images,id',
+            "target_id" => "exists:companies,id"
+        ]);
+        if ($validator->fails()) {
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
+        }
+        if (array_key_exists("images_id", $request)) {
+            foreach ($request["images_id"] as $image_id) {
+                $image = Image::find($image_id);
+                $image->delete();
+            }
+            return $this->send_response(200, "تم حذف الصور", [], []);
+        } else {
+            $images = [];
+            foreach ($request["images"] as $image) {
+                $image =  Image::create([
+                    "target_id" => $request["target_id"],
+                    "image" => $this->uploadPicture($image, '/images/companies_image/')
+                ]);
+                $images[] = $image;
+            }
+            return $this->send_response(200, "تم اضافة صور جديدة", [], $images);
+        }
     }
 }

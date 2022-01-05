@@ -145,7 +145,6 @@ class OrderStatusController extends Controller
                 "points" => $user->points - $order_status->transactions->value
             ]);
             if (array_key_exists("admin_order", $request)) {
-
                 $data["admin_order"] = $request["admin_order"];
             }
             Notifications::create([
@@ -210,7 +209,7 @@ class OrderStatusController extends Controller
             if (!isset($_GET['limit']))
                 $_GET['limit'] = 10;
             $res = $this->paging($orders,  $_GET['skip'],  $_GET['limit']);
-            return $this->send_response(200, 'تم جلب حالات الطلب بنجاح ', [], $res["model"], null, $res["count"]);
+            return $this->send_response(200, trans("message.get.order_status"), [], $res["model"], null, $res["count"]);
         }
     }
 }

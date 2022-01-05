@@ -22,4 +22,25 @@ return [
     'notification.transactions.withdraw.review' => 'Points have been withdrawn from your account under review',
     'notification.transactions.withdraw.accept' => 'The request to withdraw points from your account has been accepted',
     'notification.transactions.withdraw.reject' => 'Points withdrawal request denied',
+    'get.order_status' => 'Request cases have been successfully fetched',
+    'get.payment_methods' => 'Payment methods fetched successfully',
+    'open.ticket' => 'The ticket has been opened successfully.The reply message will be destroyed shortly',
+    'close.ticket' => 'Ticket closed successfully',
+    'get.content.ticket' => 'The contents of the open ticket have been successfully retrieved',
+    'get.open.tickets' => 'Open tickets have been successfully received',
+    'notifications.add.comment.ticket' => 'Comment has been added to your ticket',
+    'notifications.close.ticket' => 'Your ticket has been closed',
+    'add.comment' => 'Your comment has been sent successfully',
+    'error.close.ticket' => 'You cannot close a ticket that is not yours',
+    'delete.comment' => 'Comment removed successfully',
+    'error.delete.comment' => 'You cannot delete a comment that is not your own',
+
+
+
+
+
+
+
+
+
 ];

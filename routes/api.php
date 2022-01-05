@@ -46,6 +46,7 @@ Route::middleware(['auth:api', 'restrict', 'localization'])->group(function () {
         route::get("get_transactions", [TransactionController::class, "getTransactions"]);
         route::get("get_order_status_by_transactions", [OrderStatusController::class, "getOrderStatusByTransactions"]);
         route::get("get_cards", [CardController::class, "getCards"]);
+        route::get("get_order_key_types", [AdminController::class, "getOrderKeyTypes"]);
         route::get("get_companies", [CompanyController::class, "getCompanies"]);
         route::get("get_payment_methods", [PaymentMethodsController::class, "getPaymentMethods"]);
         route::get("get_currencies", [ChangeCurrncyController::class, "getCurrency"]);
@@ -84,7 +85,7 @@ Route::middleware(['auth:api', 'restrict', 'localization'])->group(function () {
             route::put("toggle_active_company", [CompanyController::class, "toggleActiveCompany"]);
             route::put("toggle_active_payment_method", [PaymentMethodsController::class, "toggleActivePaymentMethod"]);
             route::put("toggle_restrict_user", [AuthController::class, "toggleRestrictUser"]);
-
+            route::post("edit_images", [CompanyController::class, "editImage"]);
             route::delete("delete_currency", [ChangeCurrncyController::class, "deleteCurrency"]);
             route::delete("delete_company", [CompanyController::class, "deleteCompany"]);
             route::delete("delete_payment_method", [PaymentMethodsController::class, "deletePaymentMethod"]);

@@ -60,7 +60,7 @@ class PaymentMethodsController extends Controller
         if (!isset($_GET['limit']))
             $_GET['limit'] = 10;
         $res = $this->paging($payments,  $_GET['skip'],  $_GET['limit']);
-        return $this->send_response(200, 'تم جلب طرق الدفع بنجاح ', [], $res["model"], null, $res["count"]);
+        return $this->send_response(200, trans("message.get.payment_methods"), [], $res["model"], null, $res["count"]);
     }
     public function addPaymentMethod(Request $request)
     {
@@ -70,9 +70,6 @@ class PaymentMethodsController extends Controller
             "tax" => "required",
             "company_id" => "required|exists:companies,id",
             "company_tax" => "required"
-        ], [
-            "tax.required" => "يرجى ادخال  قيمة الاستقطاع",
-            "company_id.required" => "يرجى تحديد الشركة",
         ]);
         if ($validator->fails()) {
             return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);

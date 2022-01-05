@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\AdminLog;
+use App\Models\Box;
 use App\Models\Card;
+use App\Models\ChangeCurrncy;
 use App\Traits\Encryption;
 use App\Traits\Pagination;
 use App\Traits\UploadImage;
@@ -158,6 +160,7 @@ class CardController extends Controller
         $user = User::find(auth()->user()->id);
         if ($user->points >= $card->points) {
             $get_serial = SerialKeyCard::where("card_id", $request["card_id"])->whereNull("user_id")->where("used", false)->first();
+            // return $card;
             if ($get_serial) {
                 $get_serial->update([
                     "used" => true,
@@ -168,6 +171,17 @@ class CardController extends Controller
                 ]);
                 AdminLog::create([
                     "target_id" => $card->id
+                ]);
+                $company_currency = $card->join_relations[0]->companies->currncy_type;
+                $change_currency = ChangeCurrncy::where("currency", $company_currency)->first();
+                $profit = $card->points / $change_currency->points;
+                // return $profit;
+                $box = Box::first();
+                $box->update([
+                    "total_value" => $box->total_value + $profit,
+                    "company_ratio" => $box->company_ratio + $profit * 0.1,
+                    "programmer_ratio" => $box->programmer_ratio + $profit * 0.3,
+                    "managment_ratio" => $box->managment_ratio + $profit * 0.6
                 ]);
             } else {
                 return $this->send_response(200, trans("message.empty.cards"), [], []);

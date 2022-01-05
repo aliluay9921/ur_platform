@@ -38,14 +38,14 @@ class TicketController extends Controller
             ]);
         }
 
-        return $this->send_response(200, "تم فتح التذكرة بنجاح سوف تتلفى رسالة الرد بعد قليل", [], Ticket::find($ticket->id));
+        return $this->send_response(200, trans("message.open.ticket"), [], Ticket::find($ticket->id));
     }
 
     public function getTickets()
     {
         if (isset($_GET["ticket_id"])) {
             $comments = Ticket::with("comments")->find($_GET["ticket_id"]);
-            return $this->send_response(200, 'تم جلب محتويات التذكرة المفتوحة بنجاح ', [], $comments);
+            return $this->send_response(200, trans("message.get.content.ticket"), [], $comments);
         }
 
         if (auth()->user()->user_type == 2 || auth()->user()->user_type == 1) {
@@ -80,7 +80,7 @@ class TicketController extends Controller
         if (!isset($_GET['limit']))
             $_GET['limit'] = 10;
         $res = $this->paging($tickets,  $_GET['skip'],  $_GET['limit']);
-        return $this->send_response(200, 'تم جلب التذاكر المفتوحة بنجاح ', [], $res["model"], null, $res["count"]);
+        return $this->send_response(200, trans("message.get.open.tickets"), [], $res["model"], null, $res["count"]);
     }
 
     public function addCommentTicket(Request $request)
@@ -101,7 +101,7 @@ class TicketController extends Controller
         ];
         $comment = TicketComment::create($data);
         Notifications::create([
-            "title" => "تم اضافة تعليق على تذكرة خاصة بك",
+            "title" => trans("message.notifications.add.comment.ticket"),
             "body" => $request["body"],
             "target_id" => $comment->id,
             "to_user" => $comment->user_id,
@@ -114,7 +114,7 @@ class TicketController extends Controller
             ]);
         }
 
-        return $this->send_response(200, "تم ارسال تعليقك بنجاح", [], TicketComment::find($comment->id));
+        return $this->send_response(200, trans("message.add.comment"), [], TicketComment::find($comment->id));
     }
 
     public function closeTicket(Request $request)
@@ -133,15 +133,15 @@ class TicketController extends Controller
             ]);
             if (auth()->user()->id != $ticket->user_id) {
                 Notifications::create([
-                    "title" => "تم اغلاق التذكرة الخاصة بك",
+                    "title" => trans("message.notifications.close.ticket"),
                     "target_id" => $ticket->id,
                     "to_user" => $ticket->user_id,
                     "from_user" => auth()->user()->id
                 ]);
             }
-            return $this->send_response(200, "تم اغلاق التذكرة بنجاح", [], Ticket::find($request["ticket_id"]));
+            return $this->send_response(200, trans("message.close.ticket"), [], Ticket::find($request["ticket_id"]));
         } else {
-            return $this->send_response(400, "لايمكنك اغلاق تذكرة ليس لك", [], []);
+            return $this->send_response(400, trans("message.error.close.ticket"), [], []);
         }
     }
 
@@ -157,9 +157,9 @@ class TicketController extends Controller
         $comment = TicketComment::find($request["id"]);
         if (auth()->user()->id == $comment->user_id || auth()->user()->user_type == 1 || auth()->user()->user_type == 2) {
             $comment->delete();
-            return $this->send_response(200, "تم حذف التعليق بنجاح", [], []);
+            return $this->send_response(200, trans("message.delete.comment"), [], []);
         } else {
-            return $this->send_response(200, "لايمكنك حذف تعليق غير خاص بك", [], []);
+            return $this->send_response(200, trans("message.error.delete.comment"), [], []);
         }
     }
 }

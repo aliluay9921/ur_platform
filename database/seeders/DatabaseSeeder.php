@@ -21,5 +21,6 @@ class DatabaseSeeder extends Seeder
         $this->call(cardsSeeder::class);
         $this->call(CountriesSeeder::class);
         $this->call(statusSeeder::class);
+        $this->call(boxSeeder::class);
     }
 }
