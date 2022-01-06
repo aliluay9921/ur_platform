@@ -154,7 +154,7 @@ class CompanyController extends Controller
         if (array_key_exists("images_id", $request)) {
             $images = Image::where("target_id", $request["target_id"])->get();
             if ($images->count() < 2) {
-                return $this->send_response(200, "لايمكنك اكمال عملية الحذف هذا المنج يحتوي على صورة واحدة فقط", [], []);
+                return $this->send_response(400, "لايمكنك اكمال عملية الحذف هذا المنج يحتوي على صورة واحدة فقط", [], []);
             }
             foreach ($request["images_id"] as $image_id) {
                 $image = Image::find($image_id);
@@ -164,7 +164,7 @@ class CompanyController extends Controller
         } else {
             $images = [];
             if (count($request["images"]) == 0) {
-                return $this->send_response(200, "يجب ادخال صور", [], []);
+                return $this->send_response(400, "يجب ادخال صور", [], []);
             } else {
                 foreach ($request["images"] as $image) {
                     $image =  Image::create([

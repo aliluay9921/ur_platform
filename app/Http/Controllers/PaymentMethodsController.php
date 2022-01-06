@@ -24,11 +24,16 @@ class PaymentMethodsController extends Controller
             })->first();
             return $this->send_response(200, "تم جلب العنصر بنجاح", [], $payment);
         }
-        $payments = PaymentMethod::whereHas("join_relations", function ($q) {
-            $q->whereHas("companies", function ($query) {
-                $query->where("active", 1);
-            });
-        });
+        if (auth()->user()->user_type == 1 || auth()->user()->user_type == 2) {
+            $payments = PaymentMethod::whereHas("join_relations");
+        } else {
+            $payments = PaymentMethod::whereHas("join_relations", function ($q) {
+                $q->whereHas("companies", function ($query) {
+                    $query->where("active", 1);
+                });
+            })->where("active", 1);
+        }
+
         if (isset($_GET['filter'])) {
             $filter = json_decode($_GET['filter']);
             $payments->where($filter->name, $filter->value);
@@ -133,7 +138,11 @@ class PaymentMethodsController extends Controller
         }
 
         if (array_key_exists("barcode", $request)) {
-            $data["barcode"] = $this->uploadPicture($request["barcode"], '/images/paymentBarcode/');
+            if ($request["barcode"] == null) {
+                $data["barcode"] = null;
+            } else {
+                $data["barcode"] = $this->uploadPicture($request["barcode"], '/images/paymentBarcode/');
+            }
         }
         $payment = PaymentMethod::find($request["id"]);
         $payment->update($data);
