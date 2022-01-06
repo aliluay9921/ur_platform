@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\notificationSocket;
 use App\Models\User;
 use App\Models\Status;
 use App\Models\Company;
@@ -32,12 +33,13 @@ class OrderStatusController extends Controller
                 "status_id" => $status->id,
                 "type" => $order_status->type
             ];
-            Notifications::create([
+            $notify =  Notifications::create([
                 "title" => trans("message.notification.transactions.deposit.review"),
                 "target_id" => $order_status->order_id,
                 "to_user" =>  $order_status->transactions->user_id,
                 "from_user" => auth()->user()->id
             ]);
+            broadcast(new notificationSocket($notify, $order_status->transactions->user_id));
         } elseif ($request["type"] == 2) {
             $status = Status::where("type", 2)->first();
             $data = [
@@ -47,13 +49,14 @@ class OrderStatusController extends Controller
                 "before_operation" => $order_status->transactions->user->points,
                 "after_operation" => $order_status->transactions->user->points + $order_status->transactions->value,
             ];
-            Notifications::create([
+            $notify =  Notifications::create([
                 "title" => trans("message.notification.transactions.deposit.accept"),
                 "target_id" => $order_status->order_id,
                 "to_user" =>  $order_status->transactions->user_id,
                 "from_user" => auth()->user()->id
             ]);
             $user_id =  $order_status->transactions->user_id;
+            broadcast(new notificationSocket($notify, $user_id));
             $user = User::find($user_id);
             $user->update([
                 "points" => $user->points + $order_status->transactions->value
@@ -84,13 +87,14 @@ class OrderStatusController extends Controller
             $user->update([
                 "points" => $user->points + $new_points
             ]);
-            Notifications::create([
+            $notify =   Notifications::create([
                 "title" => trans("message.notification.transactions.deposit.accept"),
                 "body" => $request["message"],
                 "target_id" => $order_status->order_id,
                 "to_user" =>  $order_status->transactions->user_id,
                 "from_user" => auth()->user()->id
             ]);
+            broadcast(new notificationSocket($notify, $order_status->transactions->user_id));
         } elseif ($request["type"] == 4) {
             $status = Status::where("type", 4)->first();
             // $data = [];
@@ -103,13 +107,14 @@ class OrderStatusController extends Controller
             if (array_key_exists("message", $request)) {
                 $data["message"] = $request["message"];
             }
-            Notifications::create([
+            $notify = Notifications::create([
                 "title" => trans("message.notification.transactions.deposit.reject"),
                 "body" => $request["message"],
                 "target_id" => $order_status->order_id,
                 "to_user" =>  $order_status->transactions->user_id,
                 "from_user" => auth()->user()->id
             ]);
+            broadcast(new notificationSocket($notify, $order_status->transactions->user_id));
         }
         return   OrderStatus::create($data);
     }
@@ -124,12 +129,13 @@ class OrderStatusController extends Controller
                 "status_id" => $status->id,
                 "type" => $order_status->type
             ];
-            Notifications::create([
+            $notify =   Notifications::create([
                 "title" => trans("message.notification.transactions.withdraw.review"),
                 "target_id" => $order_status->order_id,
                 "to_user" =>  $order_status->transactions->user_id,
                 "from_user" => auth()->user()->id
             ]);
+            broadcast(new notificationSocket($notify, $order_status->transactions->user_id));
         } elseif ($request["type"] == 2) {
             $status = Status::where("type", 2)->first();
             $data = [
@@ -147,12 +153,13 @@ class OrderStatusController extends Controller
             if (array_key_exists("admin_order", $request)) {
                 $data["admin_order"] = $request["admin_order"];
             }
-            Notifications::create([
+            $notify = Notifications::create([
                 "title" => trans("message.notification.transactions.withdraw.accept"),
                 "target_id" => $order_status->order_id,
                 "to_user" =>  $order_status->transactions->user_id,
                 "from_user" => auth()->user()->id
             ]);
+            broadcast(new notificationSocket($notify, $order_status->transactions->user_id));
         } elseif ($request["type"] == 4) {
             $status = Status::where("type", 4)->first();
             $data = [
@@ -164,13 +171,14 @@ class OrderStatusController extends Controller
             if (array_key_exists("message", $request)) {
                 $data["message"] = $request["message"];
             }
-            Notifications::create([
+            $notify =  Notifications::create([
                 "title" => trans("message.notification.transactions.withdraw.reject"),
                 "body" => $request["message"],
                 "target_id" => $order_status->order_id,
                 "to_user" =>  $order_status->transactions->user_id,
                 "from_user" => auth()->user()->id
             ]);
+            broadcast(new notificationSocket($notify, $order_status->transactions->user_id));
         }
         return   OrderStatus::create($data);
     }

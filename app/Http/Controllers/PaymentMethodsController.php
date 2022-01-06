@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\paymentSocket;
 use App\Traits\Pagination;
 use App\Traits\UploadImage;
 use App\Traits\SendResponse;
@@ -100,6 +101,7 @@ class PaymentMethodsController extends Controller
             "payment_method_id" => $payment->id,
             "company_id" => $request["company_id"],
         ]);
+        broadcast(new paymentSocket(PaymentMethod::find($payment->id), "add"));
         return $this->send_response(200, "تم اضافة طريقة دفع جديدة بنجاح", [], PaymentMethod::find($payment->id));
     }
     public function editPaymentMethod(Request $request)
@@ -139,6 +141,8 @@ class PaymentMethodsController extends Controller
         $relations->update([
             "company_id" => $request["company_id"]
         ]);
+        broadcast(new paymentSocket(PaymentMethod::find($request["id"]), "edit"));
+
         return $this->send_response(200, "تم التعديل على طريقة الدفع", [], PaymentMethod::find($request["id"]));
     }
     public function deletePaymentMethod(Request $request)
@@ -151,6 +155,7 @@ class PaymentMethodsController extends Controller
             return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $payment = PaymentMethod::find($request["id"]);
+        broadcast(new paymentSocket(PaymentMethod::find($request["id"]), "delete"));
         $payment->delete();
         return $this->send_response(200, "تم الحذف بنجاح", [], []);
     }
@@ -167,6 +172,7 @@ class PaymentMethodsController extends Controller
         $payment->update([
             "active" => !$payment->active
         ]);
+        broadcast(new paymentSocket(PaymentMethod::find($request["id"]), "toogleActive"));
 
         return $this->send_response(200, "تم تغير حاله طريقة الدفع", [], PaymentMethod::find($request["id"]));
     }

@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Image;
-use App\Models\Notifications;
 use App\Models\Ticket;
-use App\Models\TicketComment;
 use App\Traits\Pagination;
 use App\Traits\UploadImage;
 use App\Traits\SendResponse;
 use Illuminate\Http\Request;
+use App\Models\Notifications;
+use App\Models\TicketComment;
+use App\Events\notificationSocket;
+use App\Events\ticketSocket;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
 
@@ -100,13 +102,14 @@ class TicketController extends Controller
             "user_id" => auth()->user()->id,
         ];
         $comment = TicketComment::create($data);
-        Notifications::create([
+        $notify =   Notifications::create([
             "title" => trans("message.notifications.add.comment.ticket"),
             "body" => $request["body"],
             "target_id" => $comment->id,
             "to_user" => $comment->user_id,
             "from_user" => auth()->user()->id
         ]);
+        broadcast(new notificationSocket($notify, $comment->user_id));
         if (array_key_exists("image", $request)) {
             Image::create([
                 "target_id" => $comment->id,
@@ -132,13 +135,15 @@ class TicketController extends Controller
                 "active" => false
             ]);
             if (auth()->user()->id != $ticket->user_id) {
-                Notifications::create([
+                $notify =  Notifications::create([
                     "title" => trans("message.notifications.close.ticket"),
                     "target_id" => $ticket->id,
                     "to_user" => $ticket->user_id,
                     "from_user" => auth()->user()->id
                 ]);
+                broadcast(new notificationSocket($notify, $ticket->user_id));
             }
+            broadcast(new ticketSocket($ticket, $ticket->user_id));
             return $this->send_response(200, trans("message.close.ticket"), [], Ticket::find($request["ticket_id"]));
         } else {
             return $this->send_response(400, trans("message.error.close.ticket"), [], []);

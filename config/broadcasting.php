@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'default' => env('BROADCAST_DRIVER', 'null'),
+    'default' => 'pusher',
 
     /*
     |--------------------------------------------------------------------------
@@ -38,7 +38,7 @@ return [
             'options' => [
                 'cluster' => env('PUSHER_APP_CLUSTER'),
                 'encrypted' => false, // false becouse working with http not https
-                'host' => '164.92.249.184/', // server 
+                'host' => '127.0.0.1', // server 
                 'port' => 6001,
                 'scheme' => 'http',
             ],

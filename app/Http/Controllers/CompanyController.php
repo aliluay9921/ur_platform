@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\companySocket;
 use App\Models\Image;
 use App\Models\Company;
 use App\Traits\Pagination;
@@ -78,7 +79,7 @@ class CompanyController extends Controller
                 ]);
             }
         }
-
+        broadcast(new companySocket(Company::find($company->id), "add"));
         return $this->send_response(200, "تم انشاء شركة جديدة بنجاح", [], Company::find($company->id));
     }
 
@@ -102,6 +103,8 @@ class CompanyController extends Controller
         ];
 
         Company::find($request["id"])->update($data);
+        broadcast(new companySocket(Company::find($request["id"]), "edit"));
+
         return $this->send_response(200, "تم التعديل على الشركة بنجاح", [], Company::find($request["id"]));
     }
     public function toggleActiveCompany(Request $request)
@@ -117,6 +120,8 @@ class CompanyController extends Controller
         $company->update([
             "active" => !$company->active
         ]);
+        broadcast(new companySocket(Company::find($request["id"]), "toogleActive"));
+
         return $this->send_response(200, "تم تغير حالة الشركة", [], Company::find($request["id"]));
     }
 
@@ -131,6 +136,7 @@ class CompanyController extends Controller
         }
 
         $company = Company::find($request["id"]);
+        broadcast(new companySocket(Company::find($request["id"]), "delete"));
         $company->delete();
         return $this->send_response(200, "تم حذف الشركة بنجاح", [], []);
     }

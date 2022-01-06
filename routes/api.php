@@ -41,8 +41,6 @@ Route::middleware(['auth:api', 'restrict', 'localization'])->group(function () {
     route::put("activation_account", [AuthController::class, "activationAccount"]);
 
     Route::middleware('active')->group(function () {
-
-
         route::get("get_transactions", [TransactionController::class, "getTransactions"]);
         route::get("get_order_status_by_transactions", [OrderStatusController::class, "getOrderStatusByTransactions"]);
         route::get("get_cards", [CardController::class, "getCards"]);
@@ -75,8 +73,6 @@ Route::middleware(['auth:api', 'restrict', 'localization'])->group(function () {
             route::post("add_card", [CardController::class, "addCard"]);
             route::post("add_serial_card", [CardController::class, "addSerialCard"]);
             route::post("add_currency", [ChangeCurrncyController::class, "addCurrency"]);
-
-
             route::put("change_type_order_status", [OrderStatusController::class, "changeTypeOrderStatus"]);
             route::put("edit_currency", [ChangeCurrncyController::class, "editCurrency"]);
             route::put("edit_card", [CardController::class, "editCard"]);
