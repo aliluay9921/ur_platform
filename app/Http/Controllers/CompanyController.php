@@ -152,6 +152,10 @@ class CompanyController extends Controller
             return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         if (array_key_exists("images_id", $request)) {
+            $images = Image::where("target_id", $request["target_id"])->get();
+            if ($images->count() < 2) {
+                return $this->send_response(200, "لايمكنك اكمال عملية الحذف هذا المنج يحتوي على صورة واحدة فقط", [], []);
+            }
             foreach ($request["images_id"] as $image_id) {
                 $image = Image::find($image_id);
                 $image->delete();
@@ -159,14 +163,18 @@ class CompanyController extends Controller
             return $this->send_response(200, "تم حذف الصور", [], []);
         } else {
             $images = [];
-            foreach ($request["images"] as $image) {
-                $image =  Image::create([
-                    "target_id" => $request["target_id"],
-                    "image" => $this->uploadPicture($image, '/images/companies_image/')
-                ]);
-                $images[] = $image;
+            if (count($request["images"]) == 0) {
+                return $this->send_response(200, "يجب ادخال صور", [], []);
+            } else {
+                foreach ($request["images"] as $image) {
+                    $image =  Image::create([
+                        "target_id" => $request["target_id"],
+                        "image" => $this->uploadPicture($image, '/images/companies_image/')
+                    ]);
+                    $images[] = $image;
+                }
+                return $this->send_response(200, "تم اضافة صور جديدة", [], $images);
             }
-            return $this->send_response(200, "تم اضافة صور جديدة", [], $images);
         }
     }
 }
