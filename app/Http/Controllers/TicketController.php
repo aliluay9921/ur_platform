@@ -44,13 +44,20 @@ class TicketController extends Controller
 
         return $this->send_response(200, trans("message.open.ticket"), [], Ticket::find($ticket->id));
     }
+    public function getCommentsByTicketId()
+    {
+        $comments = TicketComment::where("ticket_id", $_GET["ticket_id"]);
+        if (!isset($_GET['skip']))
+            $_GET['skip'] = 0;
+        if (!isset($_GET['limit']))
+            $_GET['limit'] = 10;
+        $res = $this->paging($comments,  $_GET['skip'],  $_GET['limit']);
+        return $this->send_response(200, trans("message.get.content.ticket"), [], $res["model"], null, $res["count"]);
+    }
 
     public function getTickets()
     {
-        if (isset($_GET["ticket_id"])) {
-            $comments = Ticket::with("comments")->find($_GET["ticket_id"]);
-            return $this->send_response(200, trans("message.get.content.ticket"), [], $comments);
-        }
+
 
         if (auth()->user()->user_type == 2 || auth()->user()->user_type == 1) {
             $tickets = Ticket::select("*");
