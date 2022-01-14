@@ -33,11 +33,13 @@ class TicketController extends Controller
             "user_id" => auth()->user()->id
         ];
         $ticket = Ticket::create($data);
-        if (array_key_exists("image", $request)) {
-            Image::create([
-                "target_id" => $ticket->id,
-                "image" => $this->uploadPicture($request["image"], '/images/ticketImages/')
-            ]);
+        if (array_key_exists("images", $request)) {
+            foreach ($request["images"] as $image) {
+                Image::create([
+                    "target_id" => $ticket->id,
+                    "image" => $this->uploadPicture($image, "/images/ticketImages/")
+                ]);
+            }
         }
 
         return $this->send_response(200, trans("message.open.ticket"), [], Ticket::find($ticket->id));
@@ -110,11 +112,13 @@ class TicketController extends Controller
             "from_user" => auth()->user()->id
         ]);
         broadcast(new notificationSocket($notify, $comment->user_id));
-        if (array_key_exists("image", $request)) {
-            Image::create([
-                "target_id" => $comment->id,
-                "image" => $this->uploadPicture($request["image"], "/images/ticketImages/")
-            ]);
+        if (array_key_exists("images", $request)) {
+            foreach ($request["images"] as $image) {
+                Image::create([
+                    "target_id" => $comment->id,
+                    "image" => $this->uploadPicture($image, "/images/ticketImages/")
+                ]);
+            }
         }
 
         return $this->send_response(200, trans("message.add.comment"), [], TicketComment::find($comment->id));
