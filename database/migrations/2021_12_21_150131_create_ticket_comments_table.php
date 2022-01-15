@@ -15,7 +15,7 @@ class CreateTicketCommentsTable extends Migration
     {
         Schema::create('ticket_comments', function (Blueprint $table) {
             $table->uuid("id")->primary();
-            $table->string("body");
+            $table->longText("body");
             $table->uuid("user_id");
             $table->uuid("ticket_id");
             $table->timestamps();

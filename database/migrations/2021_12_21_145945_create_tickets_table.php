@@ -15,7 +15,7 @@ class CreateTicketsTable extends Migration
     {
         Schema::create('tickets', function (Blueprint $table) {
             $table->uuid("id")->primary();
-            $table->string("body");
+            $table->longText("body");
             $table->uuid("user_id");
             $table->boolean("active")->default(true);
             $table->timestamps();
