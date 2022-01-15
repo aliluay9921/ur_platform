@@ -57,8 +57,6 @@ class TicketController extends Controller
 
     public function getTickets()
     {
-
-
         if (auth()->user()->user_type == 2 || auth()->user()->user_type == 1) {
             $tickets = Ticket::select("*");
         } elseif (auth()->user()->user_type == 0) {

@@ -6,6 +6,7 @@ use App\Models\AdminLog;
 use App\Models\Box;
 use App\Models\Card;
 use App\Models\ChangeCurrncy;
+use App\Models\Company;
 use App\Traits\Encryption;
 use App\Traits\Pagination;
 use App\Traits\UploadImage;
@@ -74,29 +75,30 @@ class CardController extends Controller
 
     public function addCard(Request $request)
     {
-
         $request = $request->json()->all();
         $validator = Validator::make($request, [
             "card_sale" => "required",
             "value" => "required",
-            "points" => "required",
+            "card_buy" => "required",
             "company_id" => "required|exists:companies,id",
         ]);
         if ($validator->fails()) {
             return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
+        $company = Company::find($request["company_id"]);
+        $change_currency = ChangeCurrncy::where("currency", $company->currncy_type)->first();
         $data = [];
         $data = [
             "card_sale" => $request["card_sale"],
             "value" => $request["value"],
-            "points" => $request["points"],
+            "points" => $request["card_buy"] * $change_currency->points,
         ];
+
         $card = Card::create($data);
         joinRelations::create([
             "card_id" => $card->id,
             "company_id" => $request["company_id"]
         ]);
-
         return $this->send_response(200, "تم انشاء بطاقة بنجاح", [], Card::find($card->id));
     }
     public function addSerialCard(Request $request)
@@ -122,28 +124,27 @@ class CardController extends Controller
             "id" => "required|exists:cards,id",
             "card_sale" => "required",
             "value" => "required",
-            "points" => "required",
+            "buy_card" => "required",
             "company_id" => "exists:companies,id",
 
         ]);
         if ($validator->fails()) {
             return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
+        $company = Company::find($request["company_id"]);
+        $change_currency = ChangeCurrncy::where("currency", $company->currncy_type)->first();
         $data = [];
         $data = [
             "card_sale" => $request["card_sale"],
             "value" => $request["value"],
-            "points" => $request["points"],
+            "points" => $request["card_buy"] * $change_currency->points,
         ];
         $card = Card::find($request['id']);
         $card->update($data);
-        if (array_key_exists("company_id", $request)) {
-            $relations = joinRelations::where("card_id", $request["id"])->first();
-            $relations->update([
-                "company_id" => $request["company_id"]
-            ]);
-        }
-
+        $relations = joinRelations::where("card_id", $request["id"])->first();
+        $relations->update([
+            "company_id" => $request["company_id"]
+        ]);
         return $this->send_response(200, "تم تحديث الكارد بنجاح", [], Card::find($request["id"]));
     }
 
@@ -157,10 +158,12 @@ class CardController extends Controller
             return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $card = Card::with("serial_keys")->find($request["card_id"]);
+
         $user = User::find(auth()->user()->id);
+        // return $card;
         if ($user->points >= $card->points) {
             $get_serial = SerialKeyCard::where("card_id", $request["card_id"])->whereNull("user_id")->where("used", false)->first();
-            // return $card;
+
             if ($get_serial) {
                 $get_serial->update([
                     "used" => true,
@@ -172,10 +175,11 @@ class CardController extends Controller
                 AdminLog::create([
                     "target_id" => $card->id
                 ]);
+                // الية تقسيم الارباح من عملية شراء الكارتات
                 $company_currency = $card->join_relations[0]->companies->currncy_type;
                 $change_currency = ChangeCurrncy::where("currency", $company_currency)->first();
-                $profit = $card->points / $change_currency->points;
-                // return $profit;
+                $card_buy = $card->points / $change_currency->points;
+                $profit = $card_buy - $card->card_sale;
                 $box = Box::first();
                 $box->update([
                     "total_value" => $box->total_value + $profit,
