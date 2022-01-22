@@ -35,4 +35,5 @@ return [
     'error.close.ticket' => 'لايمكنك اغلاق تذكرة ليس لك',
     'delete.comment' => 'تم حذف التعليق بنجاح',
     'error.delete.comment' => 'لايمكنك حذف تعليق غير خاص بك',
+    'get.logs.card' => 'تم جلب حركات شراء البطاقات بنجاح',
 ];

@@ -17,7 +17,8 @@ class CreateCardsTable extends Migration
             $table->uuid("id")->primary();
             $table->double("card_sale");
             $table->double("value");
-            $table->double("points");
+            $table->double("card_buy");
+            $table->softDeletes();
             $table->timestamps();
         });
     }

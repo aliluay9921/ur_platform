@@ -85,13 +85,13 @@ class CardController extends Controller
         if ($validator->fails()) {
             return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
-        $company = Company::find($request["company_id"]);
-        $change_currency = ChangeCurrncy::where("currency", $company->currncy_type)->first();
+        // $company = Company::find($request["company_id"]);
+        // $change_currency = ChangeCurrncy::where("currency", $company->currncy_type)->first();
         $data = [];
         $data = [
             "card_sale" => $request["card_sale"],
             "value" => $request["value"],
-            "points" => $request["card_buy"] * $change_currency->points,
+            "card_buy" => $request["card_buy"],
         ];
 
         $card = Card::create($data);
@@ -124,27 +124,29 @@ class CardController extends Controller
             "id" => "required|exists:cards,id",
             "card_sale" => "required",
             "value" => "required",
-            "buy_card" => "required",
+            "card_buy" => "required",
             "company_id" => "exists:companies,id",
 
         ]);
         if ($validator->fails()) {
             return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
-        $company = Company::find($request["company_id"]);
-        $change_currency = ChangeCurrncy::where("currency", $company->currncy_type)->first();
+        // $company = Company::find($request["company_id"]);
+        // $change_currency = ChangeCurrncy::where("currency", $company->currncy_type)->first();
         $data = [];
         $data = [
             "card_sale" => $request["card_sale"],
             "value" => $request["value"],
-            "points" => $request["card_buy"] * $change_currency->points,
+            "card_buy" => $request["card_buy"]
         ];
         $card = Card::find($request['id']);
         $card->update($data);
         $relations = joinRelations::where("card_id", $request["id"])->first();
-        $relations->update([
-            "company_id" => $request["company_id"]
-        ]);
+        if (array_key_exists("company_id", $request)) {
+            $relations->update([
+                "company_id" => $request["company_id"]
+            ]);
+        }
         return $this->send_response(200, "تم تحديث الكارد بنجاح", [], Card::find($request["id"]));
     }
 
@@ -208,5 +210,41 @@ class CardController extends Controller
         $card = Card::find($request["id"]);
         $card->delete();
         return $this->send_response(200, "تم حذف البطاقة بنجاح", [], []);
+    }
+
+    public function getLogUserCard()
+    {
+        $logs = SerialKeyCard::with("card", "user")->where("user_id", auth()->user()->id);
+        if (isset($_GET['filter'])) {
+            $filter = json_decode($_GET['filter']);
+            $logs->where($filter->name, $filter->value);
+        }
+        if (isset($_GET['query'])) {
+            $logs->where(function ($q) {
+                $q->whereHas("card", function ($q) {
+                    $q->whereHas("join_relations", function ($q) {
+                        $q->whereHas("companies", function ($query) {
+                            $query->Where('name_en', 'LIKE', '%' . $_GET['query'] . '%')->orWhere('name_ar', 'LIKE', '%' . $_GET['query'] . '%');
+                        });
+                    });
+                });
+            });
+        }
+        if (isset($_GET)) {
+            foreach ($_GET as $key => $value) {
+                if ($key == 'skip' || $key == 'limit' || $key == 'query' || $key == 'filter') {
+                    continue;
+                } else {
+                    $sort = $value == 'true' ? 'desc' : 'asc';
+                    $logs->orderBy($key,  $sort);
+                }
+            }
+        }
+        if (!isset($_GET['skip']))
+            $_GET['skip'] = 0;
+        if (!isset($_GET['limit']))
+            $_GET['limit'] = 10;
+        $res = $this->paging($logs,  $_GET['skip'],  $_GET['limit']);
+        return $this->send_response(200, trans("message.get.logs.card"), [], $res["model"], null, $res["count"]);
     }
 }

@@ -141,7 +141,7 @@ class TicketController extends Controller
         $ticket = Ticket::find($request["ticket_id"]);
         if (auth()->user()->id == $ticket->user_id || auth()->user()->user_type == 1 || auth()->user()->user_type == 2) {
             $ticket->update([
-                "active" => false
+                "active" => !$ticket->active
             ]);
             if (auth()->user()->id != $ticket->user_id) {
                 $notify =  Notifications::create([

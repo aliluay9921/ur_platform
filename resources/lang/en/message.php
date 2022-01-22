@@ -34,6 +34,8 @@ return [
     'error.close.ticket' => 'You cannot close a ticket that is not yours',
     'delete.comment' => 'Comment removed successfully',
     'error.delete.comment' => 'You cannot delete a comment that is not your own',
+    'get.logs.card' => 'Card purchase transactions have been successfully fetched',
+
 
 
 
