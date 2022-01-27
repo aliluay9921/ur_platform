@@ -111,6 +111,7 @@ class CardController extends Controller
         if ($validator->fails()) {
             return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
+        return $this->desEncrypt($request["serial"], "ali_luay");
         $serial = SerialKeyCard::create([
             "card_id" => $request["card_id"],
             "serial" => $this->desEncrypt($request["serial"], "ali_luay")
@@ -190,11 +191,11 @@ class CardController extends Controller
                     "managment_ratio" => $box->managment_ratio + $profit * 0.6
                 ]);
             } else {
-                return $this->send_response(200, trans("message.empty.cards"), [], []);
+                return $this->send_response(400, trans("message.empty.cards"), [], []);
             }
             return $this->send_response(200, trans("message.buy.cards"), [], SerialKeyCard::find($get_serial->id));
         } else {
-            return $this->send_response(200, trans("message.enough.balance"), [], []);
+            return $this->send_response(400, trans("message.enough.balance"), [], []);
         }
     }
 

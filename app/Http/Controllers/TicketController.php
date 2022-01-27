@@ -173,7 +173,7 @@ class TicketController extends Controller
             $comment->delete();
             return $this->send_response(200, trans("message.delete.comment"), [], []);
         } else {
-            return $this->send_response(200, trans("message.error.delete.comment"), [], []);
+            return $this->send_response(400, trans("message.error.delete.comment"), [], []);
         }
     }
 }

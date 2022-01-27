@@ -40,7 +40,7 @@ class AuthController extends Controller
             'password.required' => 'يرجى ادخال كلمة المرور ',
         ]);
         if ($validator->fails()) {
-            return $this->send_response(401, trans("message.error.key"), $validator->errors(), []);
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $fieldType = filter_var($request['user_name'], FILTER_VALIDATE_EMAIL) ? 'email' : 'user_name';
 
@@ -50,7 +50,7 @@ class AuthController extends Controller
             $token = $user->createToken('ur_platform')->accessToken;
             return $this->send_response(200, 'تم تسجيل الدخول بنجاح', [], $user, $token);
         } else {
-            return $this->send_response(401, 'هناك مشكلة تحقق من تطابق المدخلات', null, null, null);
+            return $this->send_response(400, 'هناك مشكلة تحقق من تطابق المدخلات', null, null, null);
         }
     }
 
@@ -182,7 +182,7 @@ class AuthController extends Controller
                 'email.exists' => 'يرجى ادخال بريد الكتروني صالح'
             ]);
             if ($validator->fails()) {
-                return $this->send_response(401, trans("message.error.key"), $validator->errors(), []);
+                return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
             }
             $user = User::where('email', $request['email'])->first();
             $code = UserCode::create([
@@ -377,7 +377,7 @@ class AuthController extends Controller
                 $info->delete();
                 return $this->send_response(200, "تم تغيرر البريد الالكتروني بنجاح", [], User::find(auth()->user()->id));
             } else {
-                return $this->send_response(200, "يرجى التأكد من المعلومات جيداً", [], []);
+                return $this->send_response(400, "يرجى التأكد من المعلومات جيداً", [], []);
             }
         }
     }
