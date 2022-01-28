@@ -17,7 +17,11 @@ class AdminController extends Controller
     public function getAdminLogs()
     {
 
-        $logs = AdminLog::with("transactions", "transactions.last_status", "cards", "cards.serial_keys");
+        if (isset($_GET["cards"])) {
+            $logs = AdminLog::with("cards", "cards.serial_keys");
+        } elseif (isset($_GET["transactions"])) {
+            $logs = AdminLog::with("transactions", "transactions.last_status");
+        }
         if (isset($_GET['filter'])) {
             $filter = json_decode($_GET['filter']);
             $logs->where($filter->name, $filter->value);
