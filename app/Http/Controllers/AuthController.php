@@ -202,7 +202,7 @@ class AuthController extends Controller
         }
         if (array_key_exists('code', $request) && array_key_exists("email", $request) && array_key_exists("password", $request) && array_key_exists("confirm_password", $request)) {
             $validator = Validator::make($request, [
-                'code' => 'required|min:6|max:6',
+                'code' => 'required|min:6|max:6|exists:user_codes,code',
                 'password' => [
                     'required',
                     'min:8',
@@ -218,6 +218,7 @@ class AuthController extends Controller
                 // 'logout' => 'required|boolean',
             ], [
                 'code.required' => 'يرجى ادخال الرمز الخاص لأعادة تعيين كلمة المرور',
+                'code.exists' => 'يجب ادخال كود تغير كلمة مرور صالح',
                 'confirm_password.required' => 'يرجى ملئ هذا الحقل للتأكيد ',
 
                 'password.required' => 'يرجى ادخال كلمة المرور ',
@@ -228,20 +229,15 @@ class AuthController extends Controller
             if ($validator->fails()) {
                 return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
             }
-            $code = UserCode::where("code", $request["code"])->first();
-            if ($code) {
-                $user = User::find($code->user_id);
-                $user->update([
-                    "password" => bcrypt($request["password"])
-                ]);
-                $user_codes = UserCode::where("user_id", $code->user_id)->get();
-                foreach ($user_codes as $user_code) {
-                    $user_code->delete();
-                }
-                return $this->send_response(200, "تم تغيير كلمة المرور بنجاح ", [], []);
-            } else {
-                return $this->send_response(400, "يرجى ادخال رمز تغير كلمة المرور صالح", [], []);
+            $user = User::where("email", $request["email"])->first();
+            $user->update([
+                "password" => bcrypt($request["password"])
+            ]);
+            $user_codes = UserCode::where("user_id", $user->id)->get();
+            foreach ($user_codes as $user_code) {
+                $user_code->delete();
             }
+            return $this->send_response(200, "تم تغيير كلمة المرور بنجاح ", [], []);
         }
     }
 
