@@ -173,7 +173,7 @@ class AuthController extends Controller
     public function forgetPassword(Request $request)
     {
         $request = $request->json()->all();
-        if (array_key_exists('email', $request)) {
+        if (array_key_exists('email', $request) && !array_key_exists("code", $request)) {
 
             $validator = Validator::make($request, [
                 'email' => 'required|exists:users,email',
@@ -201,6 +201,7 @@ class AuthController extends Controller
             return $this->send_response(200, "تم ارسال رمز تعيين كلمة مرور جديدة ", []);
         }
         if (array_key_exists('code', $request) && array_key_exists("email", $request) && array_key_exists("password", $request) && array_key_exists("confirm_password", $request)) {
+
             $validator = Validator::make($request, [
                 'code' => 'required|min:6|max:6|exists:user_codes,code',
                 'password' => [
