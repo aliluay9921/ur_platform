@@ -179,6 +179,7 @@ class AuthController extends Controller
                 'email' => 'required|exists:users,email',
             ], [
                 'email.required' => 'يرجى ادخال البريد الالكتروني الخاص بك',
+                'email.exists' => 'البريد الالكتروني الذي قمت بأدخاله غير مرتبط بحساب'
             ]);
             if ($validator->fails()) {
                 return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
