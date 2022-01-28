@@ -209,7 +209,6 @@ class AuthController extends Controller
                     'min:8',
                     'same:confirm_password',             // must be at least 10 characters in length
                     'regex:/[a-z]/',      // must contain at least one lowercase letter
-                    'regex:/[A-Z]/',      // must contain at least one uppercase letter
                     'regex:/[0-9]/',      // must contain at least one digit
                     // 'regex:/[@$!%*#?&]/', // must contain a special character
                 ],
