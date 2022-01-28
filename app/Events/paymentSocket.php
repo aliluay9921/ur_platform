@@ -34,7 +34,6 @@ class paymentSocket implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        $payment_id = $this->payment->id;
-        return new PrivateChannel('payment_socket' . $payment_id);
+        return new PrivateChannel('payment_socket');
     }
 }

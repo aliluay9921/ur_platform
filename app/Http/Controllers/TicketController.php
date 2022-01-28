@@ -152,7 +152,7 @@ class TicketController extends Controller
                 ]);
                 broadcast(new notificationSocket($notify, $ticket->user_id));
             }
-            broadcast(new ticketSocket($ticket, $ticket->user_id));
+            broadcast(new ticketSocket($ticket, $ticket->id));
             return $this->send_response(200, trans("message.close.ticket"), [], Ticket::find($request["ticket_id"]));
         } else {
             return $this->send_response(400, trans("message.error.close.ticket"), [], []);

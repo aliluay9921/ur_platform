@@ -13,7 +13,7 @@ use App\Http\Controllers\OrderStatusController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\ChangeCurrncyController;
 use App\Http\Controllers\PaymentMethodsController;
-
+use Illuminate\Support\Facades\Broadcast;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,7 +35,7 @@ route::get("get_countries", [AuthController::class, "getCountries"]);
 
 
 Route::middleware(['auth:api', 'restrict', 'localization'])->group(function () {
-
+    Broadcast::routes();
 
     route::get("info_auth", [AuthController::class, "infoAuth"]);
     route::put("activation_account", [AuthController::class, "activationAccount"]);

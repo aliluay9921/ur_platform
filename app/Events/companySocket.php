@@ -35,6 +35,6 @@ class companySocket implements ShouldBroadcast
     public function broadcastOn()
     {
         $company_id = $this->company->id;
-        return new PrivateChannel('company_socket' . $company_id);
+        return new PrivateChannel('company_socket');
     }
 }
