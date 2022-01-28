@@ -67,6 +67,7 @@ class Kernel extends HttpKernel
         'active' => \App\Http\Middleware\ActiveMiddleware::class,
         'restrict' => \App\Http\Middleware\RestrictMiddleware::class,
         'localization' => \App\Http\Middleware\localization::class,
+        'cors' => \App\Http\Middleware\Cors::class,
 
         // 'localize'                => \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRoutes::class,
         // 'localizationRedirect'    => \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter::class,

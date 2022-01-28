@@ -26,6 +26,6 @@ Broadcast::channel("payment_socket", function () {
 Broadcast::channel("notification_socket.{user_id}", function ($user_id, $user) {
     return $user_id == $user->id;
 });
-Broadcast::channel("ticket_socket.{ticket_id}", function ($ticket_id, $user) { //ticket_id بدل user_id
+Broadcast::channel("ticket_socket.{ticket_id}", function ($ticket_id, $user) {
     return $ticket_id;
 });

@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Validator;
 class TicketController extends Controller
 {
     use SendResponse, Pagination, UploadImage;
+
     public function openTicket(Request $request)
     {
         $request = $request->json()->all();
