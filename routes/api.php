@@ -26,7 +26,6 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-Broadcast::routes(['middleware' => ['auth:api']]);
 
 Route::middleware(['cors'])->group(function () {
 
@@ -39,7 +38,7 @@ Route::middleware(['cors'])->group(function () {
 
 
     Route::middleware(['auth:api', 'restrict', 'localization'])->group(function () {
-
+        Broadcast::routes();
 
         route::get("info_auth", [AuthController::class, "infoAuth"]);
         route::put("activation_account", [AuthController::class, "activationAccount"]);
