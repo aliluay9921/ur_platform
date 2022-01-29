@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\notificationSocket;
+use App\Events\transactionsSocket;
 use App\Models\User;
 use App\Models\Status;
 use App\Models\Company;
@@ -16,6 +17,7 @@ use Illuminate\Http\Request;
 use App\Models\ChangeCurrncy;
 use App\Models\joinRelations;
 use App\Models\Notifications;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Validator;
 
 class OrderStatusController extends Controller
@@ -203,6 +205,7 @@ class OrderStatusController extends Controller
         $transaction->update([
             "last_order" => $new_order->id
         ]);
+        Broadcast(new transactionsSocket($transaction, $transaction->user_id));
         return  $this->send_response(200, "تم تغير حالة الطلب", [], OrderStatus::with("transactions")->find($new_order->id));
     }
 

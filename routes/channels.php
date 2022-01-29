@@ -29,3 +29,6 @@ Broadcast::channel("notification_socket.{user_id}", function ($user_id, $user) {
 Broadcast::channel("ticket_socket.{ticket_id}", function ($ticket_id, $user) {
     return $ticket_id;
 });
+Broadcast::channel("transaction_socket.{user_id}", function ($user_id, $user) {
+    return $user_id == $user->id;
+});
