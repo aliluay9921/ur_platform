@@ -38,6 +38,6 @@ class commentSocket implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('comment_socket' . $this->ticket->id);
+        return new PrivateChannel('comment_socket.' . $this->ticket->id);
     }
 }

@@ -35,6 +35,6 @@ class ticketSocket implements ShouldBroadcast
     public function broadcastOn()
     {
         $user_id = $this->user_id;
-        return new PrivateChannel('ticket_socket' . $user_id);
+        return new PrivateChannel('ticket_socket.' . $user_id);
     }
 }

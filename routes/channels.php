@@ -40,7 +40,7 @@ Broadcast::channel("transaction_socket.{user_id}", function ($user_id, $user) {
     return $user_id == $user->id;
 });
 
-Broadcast::channel("comment_socket", function ($ticket_id, $user) {
+Broadcast::channel("comment_socket.{ticket_id}", function ($ticket_id, $user) {
     $ticket = Ticket::where("user_id", $user->id)->find($ticket_id);
     return $ticket != null;
 });

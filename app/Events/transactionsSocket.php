@@ -36,6 +36,6 @@ class transactionsSocket implements ShouldBroadcast
     public function broadcastOn()
     {
         $user_id = $this->user_id;
-        return new PrivateChannel('transaction_socket' . $user_id);
+        return new PrivateChannel('transaction_socket.' . $user_id);
     }
 }
