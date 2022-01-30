@@ -50,7 +50,7 @@ class AdminController extends Controller
                     continue;
                 } else {
                     $sort = $value == 'true' ? 'desc' : 'asc';
-
+                    error_log("here");
                     if ($key == "status") {
                         $logs->join('transactions', 'admin_logs.target_id', '=', 'transactions.id')->select("admin_logs.*");
                         $logs->join('order_statuses', 'transactions.last_order', '=', 'order_statuses.id');
