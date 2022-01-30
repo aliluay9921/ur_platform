@@ -18,10 +18,12 @@ class AdminController extends Controller
     {
 
         if (isset($_GET["type"])) {
-            if ($_GET["type"] ==  "transactions") {
-                $logs = AdminLog::with("transactions", "transactions.last_status");
-            } else {
-                $logs = AdminLog::with("cards", "cards.serial_keys");
+            if ($_GET["type"] ===  "transactions") {
+                error_log("transactions");
+                $logs = AdminLog::with("transactions")->whereHas("transactions");
+            } elseif ($_GET["type"] == "cards") {
+                error_log("cards");
+                $logs = AdminLog::with("cards")->whereHas("cards");
             }
         }
 
@@ -50,7 +52,6 @@ class AdminController extends Controller
                     continue;
                 } else {
                     $sort = $value == 'true' ? 'desc' : 'asc';
-                    error_log("here");
                     if ($key == "status") {
                         $logs->join('transactions', 'admin_logs.target_id', '=', 'transactions.id')->select("admin_logs.*");
                         $logs->join('order_statuses', 'transactions.last_order', '=', 'order_statuses.id');
