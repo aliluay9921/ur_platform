@@ -40,6 +40,11 @@ Route::middleware(['cors'])->group(function () {
     Route::middleware(['auth:api', 'restrict', 'localization'])->group(function () {
         // Broadcast::routes();
         Broadcast::routes(['middleware' => ['auth:api']]);
+
+
+
+
+
         route::get("info_auth", [AuthController::class, "infoAuth"]);
         route::put("activation_account", [AuthController::class, "activationAccount"]);
 
