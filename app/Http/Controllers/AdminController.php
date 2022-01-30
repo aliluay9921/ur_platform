@@ -46,7 +46,7 @@ class AdminController extends Controller
         }
         if (isset($_GET)) {
             foreach ($_GET as $key => $value) {
-                if ($key == 'skip' || $key == 'limit' || $key == 'query' || $key == 'filter') {
+                if ($key == 'skip' || $key == 'limit' || $key == 'query' || $key == 'filter' || $key == 'type') {
                     continue;
                 } else {
                     $sort = $value == 'true' ? 'desc' : 'asc';
