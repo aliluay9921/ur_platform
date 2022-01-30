@@ -20,7 +20,7 @@ class AdminController extends Controller
         if (isset($_GET["type"])) {
             if ($_GET["type"] ==  "transactions") {
                 $logs = AdminLog::with("transactions", "transactions.last_status");
-            } else if ($_GET["type"] == "cards") {
+            } else {
                 $logs = AdminLog::with("cards", "cards.serial_keys");
             }
         }
