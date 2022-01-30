@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\transactionsSocket;
 use App\Models\AdminLog;
 use App\Models\Status;
 use App\Traits\Pagination;
@@ -127,6 +128,8 @@ class TransactionController extends Controller
             AdminLog::create([
                 "target_id" => $deposit->id
             ]);
+
+            broadcast(new transactionsSocket($deposit, auth()->user()->id));
         } else {
             return $this->send_response(400, trans("message.limit.transactions") . ' $' . $payments->min_value, [], []);
         }
@@ -206,6 +209,8 @@ class TransactionController extends Controller
                             AdminLog::create([
                                 "target_id" => $withdraw->id
                             ]);
+                            broadcast(new transactionsSocket($withdraw, auth()->user()->id));
+
 
                             return $this->send_response(200, trans("message.withdraw.review"), [], Transaction::find($withdraw->id));
                         }
