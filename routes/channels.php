@@ -36,8 +36,9 @@ Broadcast::channel("ticket_socket.{ticket_id}", function ($ticket_id, $user) {
         return $ticket != null;
     }
 });
-Broadcast::channel("transaction_socket.{user_id}", function ($user_id, $user) {
-    return $user_id == $user->id;
+Broadcast::channel("transaction_socket.{user_id}", function ($user, $user_id) {
+    error_log("here" . $user_id);
+    return $user->id === $user_id;
 });
 
 Broadcast::channel("comment_socket.{ticket_id}", function ($ticket_id, $user) {
