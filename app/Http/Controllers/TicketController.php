@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\commentSocket;
+use App\Events\companySocket;
 use App\Models\Image;
 use App\Models\Ticket;
 use App\Traits\Pagination;
@@ -42,6 +44,7 @@ class TicketController extends Controller
                 ]);
             }
         }
+        broadcast(new ticketSocket($ticket, $ticket->user_id));
 
         return $this->send_response(200, trans("message.open.ticket"), [], Ticket::find($ticket->id));
     }
@@ -127,6 +130,9 @@ class TicketController extends Controller
             }
         }
 
+        $ticket = Ticket::find($request["ticket_id"]);
+        broadcast(new commentSocket($ticket, $comment, "add"));
+
         return $this->send_response(200, trans("message.add.comment"), [], TicketComment::find($comment->id));
     }
 
@@ -153,7 +159,7 @@ class TicketController extends Controller
                 ]);
                 broadcast(new notificationSocket($notify, $ticket->user_id));
             }
-            broadcast(new ticketSocket($ticket, $ticket->id));
+            broadcast(new ticketSocket($ticket, $ticket->user_id));
             return $this->send_response(200, trans("message.close.ticket"), [], Ticket::find($request["ticket_id"]));
         } else {
             return $this->send_response(400, trans("message.error.close.ticket"), [], []);
@@ -170,8 +176,10 @@ class TicketController extends Controller
             return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $comment = TicketComment::find($request["id"]);
+        $ticket = Ticket::find($comment->ticket_id);
         if (auth()->user()->id == $comment->user_id || auth()->user()->user_type == 1 || auth()->user()->user_type == 2) {
             $comment->delete();
+            broadcast(new commentSocket($ticket, $comment, "delete"));
             return $this->send_response(200, trans("message.delete.comment"), [], []);
         } else {
             return $this->send_response(400, trans("message.error.delete.comment"), [], []);

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Ticket;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -27,8 +28,19 @@ Broadcast::channel("notification_socket.{user_id}", function ($user_id, $user) {
     return $user_id == $user->id;
 });
 Broadcast::channel("ticket_socket.{ticket_id}", function ($ticket_id, $user) {
-    return $ticket_id;
+    if ($user->user_type == 2 || $user->user_type == 1) {
+        $ticket = Ticket::find($ticket_id);
+        return $ticket != null;
+    } else {
+        $ticket = Ticket::where("user_id", $user->id)->find($ticket_id);
+        return $ticket != null;
+    }
 });
 Broadcast::channel("transaction_socket.{user_id}", function ($user_id, $user) {
     return $user_id == $user->id;
+});
+
+Broadcast::channel("comment_socket", function ($ticket_id, $user) {
+    $ticket = Ticket::where("user_id", $user->id)->find($ticket_id);
+    return $ticket != null;
 });

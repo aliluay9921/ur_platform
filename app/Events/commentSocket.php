@@ -10,8 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class transactionsSocket implements ShouldBroadcast
-
+class commentSocket implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -20,13 +19,17 @@ class transactionsSocket implements ShouldBroadcast
      *
      * @return void
      */
-    public $transaction;
-    public $user_id;
-    public function __construct($transaction, $user_id)
+    public $ticket;
+    public $comment;
+    public $type;
+
+    public function __construct($ticket, $comment, $type)
     {
-        $this->transaction = $transaction;
-        $this->user_id = $user_id;
+        $this->ticket = $ticket;
+        $this->comment = $comment;
+        $this->type = $type;
     }
+
 
     /**
      * Get the channels the event should broadcast on.
@@ -35,7 +38,6 @@ class transactionsSocket implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        $user_id = $this->user_id;
-        return new PrivateChannel('transaction_socket' . $user_id);
+        return new PrivateChannel('comment_socket' . $this->ticket->id);
     }
 }
