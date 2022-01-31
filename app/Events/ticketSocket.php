@@ -20,11 +20,11 @@ class ticketSocket implements ShouldBroadcast
      * @return void
      */
     public $ticket;
-    public $user_id;
-    public function __construct($ticket, $user_id)
+    public $type;
+    public function __construct($ticket, $type)
     {
         $this->ticket = $ticket;
-        $this->user_id = $user_id;
+        $this->type = $type;
     }
 
     /**
@@ -34,7 +34,7 @@ class ticketSocket implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        $user_id = $this->user_id;
-        return new PrivateChannel('ticket_socket.' . $user_id);
+
+        return new PrivateChannel('ticket_socket');
     }
 }

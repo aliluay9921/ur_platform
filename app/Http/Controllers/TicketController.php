@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\commentSocket;
-use App\Events\companySocket;
+use App\Models\User;
 use App\Models\Image;
 use App\Models\Ticket;
 use App\Traits\Pagination;
 use App\Traits\UploadImage;
+use App\Events\ticketSocket;
 use App\Traits\SendResponse;
 use Illuminate\Http\Request;
+use App\Events\commentSocket;
+use App\Events\companySocket;
 use App\Models\Notifications;
 use App\Models\TicketComment;
 use App\Events\notificationSocket;
-use App\Events\ticketSocket;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
 
@@ -44,7 +45,8 @@ class TicketController extends Controller
                 ]);
             }
         }
-        broadcast(new ticketSocket($ticket, $ticket->user_id));
+        // $admin = User::whereIn("user_type", [1, 2])->get();
+        broadcast(new ticketSocket($ticket, "add"));
 
         return $this->send_response(200, trans("message.open.ticket"), [], Ticket::find($ticket->id));
     }
@@ -159,7 +161,8 @@ class TicketController extends Controller
                 ]);
                 broadcast(new notificationSocket($notify, $ticket->user_id));
             }
-            broadcast(new ticketSocket($ticket, $ticket->user_id));
+            broadcast(new ticketSocket($ticket, "edit"));
+
             return $this->send_response(200, trans("message.close.ticket"), [], Ticket::find($request["ticket_id"]));
         } else {
             return $this->send_response(400, trans("message.error.close.ticket"), [], []);
