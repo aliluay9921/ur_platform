@@ -181,8 +181,9 @@ class TicketController extends Controller
         $comment = TicketComment::find($request["id"]);
         $ticket = Ticket::find($comment->ticket_id);
         if (auth()->user()->id == $comment->user_id || auth()->user()->user_type == 1 || auth()->user()->user_type == 2) {
-            $comment->delete();
             broadcast(new commentSocket($ticket, $comment, "delete"));
+
+            $comment->delete();
             return $this->send_response(200, trans("message.delete.comment"), [], []);
         } else {
             return $this->send_response(400, trans("message.error.delete.comment"), [], []);
