@@ -205,7 +205,7 @@ class OrderStatusController extends Controller
         $transaction->update([
             "last_order" => $new_order->id
         ]);
-        Broadcast(new transactionsSocket($transaction, $transaction->user_id));
+        Broadcast(new transactionsSocket($transaction, $transaction->user));
         return  $this->send_response(200, "تم تغير حالة الطلب", [], OrderStatus::with("transactions")->find($new_order->id));
     }
 

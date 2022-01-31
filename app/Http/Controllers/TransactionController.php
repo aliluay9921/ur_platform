@@ -130,7 +130,7 @@ class TransactionController extends Controller
             ]);
             $admins = User::whereIn("user_type", [1, 2])->get();
             foreach ($admins as $admin) {
-                broadcast(new transactionsSocket(AdminLog::with("transactions", "transactions.last_status")->find($admin_log->id), $admin->id));
+                broadcast(new transactionsSocket(AdminLog::with("transactions", "transactions.last_status")->find($admin_log->id), $admin));
             }
         } else {
             return $this->send_response(400, trans("message.limit.transactions") . ' $' . $payments->min_value, [], []);
@@ -213,7 +213,7 @@ class TransactionController extends Controller
                             ]);
                             $admins = User::whereIn("user_type", [1, 2])->get();
                             foreach ($admins as $admin) {
-                                broadcast(new transactionsSocket(AdminLog::with("transactions", "transactions.last_status")->find($admin_log->id), $admin->id));
+                                broadcast(new transactionsSocket(AdminLog::with("transactions", "transactions.last_status")->find($admin_log->id), $admin));
                             }
 
 

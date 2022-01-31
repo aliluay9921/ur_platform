@@ -35,7 +35,6 @@ class transactionsSocket implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        error_log("" . $this->user_id);
         return new PrivateChannel('transaction_socket.' . $this->user->id);
     }
 }
