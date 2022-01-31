@@ -39,7 +39,7 @@ class AdminController extends Controller
                 $q->whereHas("transactions", function ($q) {
                     $q->whereHas("user", function ($q) {
                         $q->where("user_name", 'LIKE', '%' . $_GET['query'] . '%');
-                    })->orwhere("operation_number", 'LIKE', '%' . $_GET['query'] . '%');
+                    })->orwhere("operation_number", 'LIKE', '%' . $_GET['query'] . '%')->orwhere("net_price", 'LIKE', '%' . $_GET['query'] . '%');
                 });
                 foreach ($columns as $column) {
                     $q->orWhere("admin_logs." . $column, 'LIKE', '%' . $_GET['query'] . '%');

@@ -125,12 +125,12 @@ class TransactionController extends Controller
             $deposit->update([
                 "last_order" => $order->id
             ]);
-            AdminLog::create([
+            $admin_log =  AdminLog::create([
                 "target_id" => $deposit->id
             ]);
             $admins = User::whereIn("user_type", [1, 2])->get();
             foreach ($admins as $admin) {
-                broadcast(new transactionsSocket($deposit, $admin->id));
+                broadcast(new transactionsSocket($admin_log, $admin->id));
             }
             broadcast(new transactionsSocket($deposit, auth()->user()->id));
         } else {
@@ -209,9 +209,13 @@ class TransactionController extends Controller
                             $withdraw->update([
                                 "last_order" => $order->id
                             ]);
-                            AdminLog::create([
+                            $admin_log =   AdminLog::create([
                                 "target_id" => $withdraw->id
                             ]);
+                            $admins = User::whereIn("user_type", [1, 2])->get();
+                            foreach ($admins as $admin) {
+                                broadcast(new transactionsSocket($admin_log, $admin->id));
+                            }
                             broadcast(new transactionsSocket($withdraw, auth()->user()->id));
 
 
