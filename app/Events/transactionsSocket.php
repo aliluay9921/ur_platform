@@ -21,11 +21,11 @@ class transactionsSocket implements ShouldBroadcast
      * @return void
      */
     public $transaction;
-    public $user_id;
-    public function __construct($transaction, $user_id)
+    public $user;
+    public function __construct($transaction, $user)
     {
         $this->transaction = $transaction;
-        $this->user_id = $user_id;
+        $this->user = $user;
     }
 
     /**
@@ -36,6 +36,6 @@ class transactionsSocket implements ShouldBroadcast
     public function broadcastOn()
     {
         error_log("" . $this->user_id);
-        return new PrivateChannel('transaction_socket.' . $this->user_id);
+        return new PrivateChannel('transaction_socket.' . $this->user->id);
     }
 }

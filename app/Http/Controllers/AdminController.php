@@ -69,7 +69,7 @@ class AdminController extends Controller
             $_GET['skip'] = 0;
         if (!isset($_GET['limit']))
             $_GET['limit'] = 10;
-        $res = $this->paging($logs,  $_GET['skip'],  $_GET['limit']);
+        $res = $this->paging($logs->orderBy("created_at", "DESC"),  $_GET['skip'],  $_GET['limit']);
         return $this->send_response(200, 'تم جلب الحركات بنجاح ', [], $res["model"], null, $res["count"]);
     }
 
