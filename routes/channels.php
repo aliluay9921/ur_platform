@@ -37,12 +37,8 @@ Broadcast::channel("ticket_socket.{ticket_id}", function ($ticket_id, $user) {
     }
 });
 Broadcast::channel("transaction_socket.{user_id}", function ($user, $user_id) {
-    if ($user->user_type == 2 || $user->user_type == 1) {
-        return true;
-    } else {
-        return $user->id === $user_id;
-    }
-    error_log("here" . $user_id);
+
+    return $user->id === $user_id;
 });
 
 Broadcast::channel("comment_socket.{ticket_id}", function ($ticket_id, $user) {

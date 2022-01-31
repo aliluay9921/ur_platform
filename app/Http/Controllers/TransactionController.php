@@ -128,7 +128,10 @@ class TransactionController extends Controller
             AdminLog::create([
                 "target_id" => $deposit->id
             ]);
-
+            $admins = User::whereIn("user_type", [1, 2])->get();
+            foreach ($admins as $admin) {
+                broadcast(new transactionsSocket($deposit, $admin->id));
+            }
             broadcast(new transactionsSocket($deposit, auth()->user()->id));
         } else {
             return $this->send_response(400, trans("message.limit.transactions") . ' $' . $payments->min_value, [], []);
