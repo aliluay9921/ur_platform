@@ -36,6 +36,10 @@ Broadcast::channel("transaction_socket.{user_id}", function ($user, $user_id) {
 });
 
 Broadcast::channel("comment_socket.{ticket_id}", function ($ticket_id, $user) {
-    $ticket = Ticket::where("user_id", $user->id)->find($ticket_id);
+    if ($user->user_type == 1 && $user->type == 2) {
+        $ticket = Ticket::find($ticket_id);
+    } else {
+        $ticket = Ticket::where("user_id", $user->id)->find($ticket_id);
+    }
     return $ticket != null;
 });
