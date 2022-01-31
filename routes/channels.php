@@ -36,6 +36,7 @@ Broadcast::channel("transaction_socket.{user_id}", function ($user, $user_id) {
 });
 
 Broadcast::channel("comment_socket.{ticket_id}", function ($ticket_id, $user) {
+    error_log("" . $user->user_type);
     if ($user->user_type == 1 && $user->user_type == 2) {
         $ticket = Ticket::find($ticket_id);
     } else {
