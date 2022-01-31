@@ -57,7 +57,7 @@ class TicketController extends Controller
             $_GET['skip'] = 0;
         if (!isset($_GET['limit']))
             $_GET['limit'] = 10;
-        $res = $this->paging($comments,  $_GET['skip'],  $_GET['limit']);
+        $res = $this->paging($comments->orderBy("created_at", "DESC"),  $_GET['skip'],  $_GET['limit']);
         return $this->send_response(200, trans("message.get.content.ticket"), [], $res["model"], null, $res["count"]);
     }
 
