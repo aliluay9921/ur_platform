@@ -59,7 +59,7 @@ Route::middleware(['cors'])->group(function () {
             route::get("get_tickets", [TicketController::class, "getTickets"]);
             route::get("get_comments_by_ticket_id", [TicketController::class, 'getCommentsByTicketId']);
             route::get("get_log_user_card", [CardController::class, "getLogUserCard"]);
-
+            route::get("get_notifications", [AdminController::class, "getNotifications"]);
             route::post("change_email", [AuthController::class, 'changeEmail']);
             route::post("check_user_name", [AuthController::class, "checkUserName"]);
             route::post("buy_card", [CardController::class, "buyCard"]);

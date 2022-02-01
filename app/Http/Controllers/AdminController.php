@@ -2,18 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AdminLog;
-use App\Models\OrderKeyType;
 use App\Models\User;
+use App\Models\AdminLog;
 use App\Traits\Pagination;
+use App\Models\OrderKeyType;
 use App\Traits\SendResponse;
 use Illuminate\Http\Request;
+use App\Models\Notifications;
 use Illuminate\Support\Facades\Schema;
 
 class AdminController extends Controller
 {
     use SendResponse, Pagination;
 
+    public function getNotifications()
+    {
+        $notifications = Notifications::where("user_id", auth()->user()->id);
+        if (!isset($_GET['skip']))
+            $_GET['skip'] = 0;
+        if (!isset($_GET['limit']))
+            $_GET['limit'] = 10;
+        $res = $this->paging($notifications->orderBy("created_at", "DESC"),  $_GET['skip'],  $_GET['limit']);
+        return $this->send_response(200, trans("message.get.notifications"), [], $res["model"], null, $res["count"]);
+    }
     public function getAdminLogs()
     {
 
