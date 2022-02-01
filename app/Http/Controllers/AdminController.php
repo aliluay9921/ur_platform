@@ -17,7 +17,7 @@ class AdminController extends Controller
 
     public function getNotifications()
     {
-        $notifications = Notifications::where("user_id", auth()->user()->id);
+        $notifications = Notifications::where("to_user", auth()->user()->id);
         if (!isset($_GET['skip']))
             $_GET['skip'] = 0;
         if (!isset($_GET['limit']))
