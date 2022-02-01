@@ -25,7 +25,8 @@ Broadcast::channel("payment_socket", function () {
     return true;
 });
 Broadcast::channel("notification_socket.{user_id}", function ($user_id, $user) {
-    return $user_id == auth()->user()->id;
+    error_log("" . $user_id);
+    return $user_id === auth()->user()->id;
 });
 Broadcast::channel("ticket_socket", function () {
     return true;

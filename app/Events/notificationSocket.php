@@ -19,11 +19,11 @@ class notificationSocket implements ShouldBroadcast
      *
      * @return void
      */
-    public $notification;
+    public $notify;
     public $user_id;
-    public function __construct($notification, $user_id)
+    public function __construct($notify, $user_id)
     {
-        $this->notification = $notification;
+        $this->notify = $notify;
         $this->user_id = $user_id;
     }
 
