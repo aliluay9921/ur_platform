@@ -34,7 +34,6 @@ class notificationSocket implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        $user_id = $this->user_id;
-        return new PrivateChannel('notification_socket.' . $user_id);
+        return new PrivateChannel('notification_socket.' . $this->user_id);
     }
 }
