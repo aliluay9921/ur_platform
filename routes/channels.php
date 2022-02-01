@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Notifications;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\Broadcast;
 
@@ -24,9 +25,8 @@ Broadcast::channel("company_socket", function () {
 Broadcast::channel("payment_socket", function () {
     return true;
 });
-Broadcast::channel("notification_socket.{user_id}", function ($user_id, $user) {
-    // error_log("" . $user_id);
-    return true;
+Broadcast::channel("notification_socket.{user_id}", function ($user, $user_id) {
+    return $user_id === $user->id;
 });
 Broadcast::channel("ticket_socket", function () {
     return true;
