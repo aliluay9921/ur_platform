@@ -11,6 +11,8 @@ class Notifications extends Model
     use HasFactory, Uuids;
     protected $guarded = [];
     protected $with = ["transactions", "ticket", "comment"];
+    protected $hidden = ["seen"];
+
 
     /**
      * Get the user that owns the Notifications
