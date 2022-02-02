@@ -33,7 +33,6 @@ Broadcast::channel("ticket_socket", function () {
     return true;
 });
 Broadcast::channel("transaction_socket.{user_id}", function ($user, $user_id) {
-
     return $user->id === $user_id;
 });
 
