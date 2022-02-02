@@ -11,7 +11,7 @@ class Notifications extends Model
     use HasFactory, Uuids;
     protected $guarded = [];
     protected $with = ["transactions", "ticket", "comment"];
-    protected $hidden = ["seen"];
+
 
 
     /**

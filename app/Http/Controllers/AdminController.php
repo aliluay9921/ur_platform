@@ -18,13 +18,13 @@ class AdminController extends Controller
 
     public function getNotifications()
     {
-        $notifications = Notifications::where("to_user", auth()->user()->id);
+        $notifications = Notifications::where("to_user", auth()->user()->id)->where("seen", false);
         if (!isset($_GET['skip']))
             $_GET['skip'] = 0;
         if (!isset($_GET['limit']))
             $_GET['limit'] = 10;
         $res = $this->paging($notifications->orderBy("created_at", "DESC"),  $_GET['skip'],  $_GET['limit']);
-        return $this->send_response(200, trans("message.get.notifications"), [], $res["model"], null, $res["count"]);
+        return $this->send_response(200, trans("message.get.all.notifications"), [], $res["model"], null, $res["count"]);
     }
     public function getAdminLogs()
     {
