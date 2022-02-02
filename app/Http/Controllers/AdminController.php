@@ -10,6 +10,7 @@ use App\Traits\SendResponse;
 use Illuminate\Http\Request;
 use App\Models\Notifications;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
 {
@@ -150,5 +151,21 @@ class AdminController extends Controller
             $_GET['limit'] = 10;
         $res = $this->paging($get,  $_GET['skip'],  $_GET['limit']);
         return $this->send_response(200, 'تم جلب العنصر بنجاح', [], $res["model"], null, $res["count"]);
+    }
+
+    public function seenNotification(Request $request)
+    {
+        $request = $request->json()->all();
+        $validator = Validator::make($request, [
+            'id' => 'required|exists:notifications,id',
+        ]);
+        if ($validator->fails()) {
+            return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
+        }
+        $notification = Notifications::find($request["id"]);
+        $notification->update([
+            "seen" => true
+        ]);
+        return $this->send_response(200, 'تم تعديل الحالة بنجاح', [], $notification);
     }
 }
