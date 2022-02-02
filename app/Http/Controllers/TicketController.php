@@ -120,7 +120,8 @@ class TicketController extends Controller
             "body" => $request["body"],
             "target_id" => $comment->id,
             "to_user" => $comment->user_id,
-            "from_user" => auth()->user()->id
+            "from_user" => auth()->user()->id,
+            "type" => 0
         ]);
         broadcast(new notificationSocket($notify, $comment->user_id));
         if (array_key_exists("images", $request)) {
@@ -157,7 +158,8 @@ class TicketController extends Controller
                     "title" => trans("message.notifications.close.ticket"),
                     "target_id" => $ticket->id,
                     "to_user" => $ticket->user_id,
-                    "from_user" => auth()->user()->id
+                    "from_user" => auth()->user()->id,
+                    "type" => 1
                 ]);
                 broadcast(new notificationSocket($notify, $ticket->user_id));
             }

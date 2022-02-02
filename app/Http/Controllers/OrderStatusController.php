@@ -39,7 +39,8 @@ class OrderStatusController extends Controller
                 "title" => trans("message.notification.transactions.deposit.review"),
                 "target_id" => $order_status->order_id,
                 "to_user" =>  $order_status->transactions->user_id,
-                "from_user" => auth()->user()->id
+                "from_user" => auth()->user()->id,
+                "type" => 2
             ]);
             broadcast(new notificationSocket($notify, $order_status->transactions->user_id));
         } elseif ($request["type"] == 2) {
@@ -55,7 +56,8 @@ class OrderStatusController extends Controller
                 "title" => trans("message.notification.transactions.deposit.accept"),
                 "target_id" => $order_status->order_id,
                 "to_user" =>  $order_status->transactions->user_id,
-                "from_user" => auth()->user()->id
+                "from_user" => auth()->user()->id,
+                "type" => 2
             ]);
             $user_id =  $order_status->transactions->user_id;
             broadcast(new notificationSocket($notify, $user_id));
@@ -94,7 +96,8 @@ class OrderStatusController extends Controller
                 "body" => $request["message"],
                 "target_id" => $order_status->order_id,
                 "to_user" =>  $order_status->transactions->user_id,
-                "from_user" => auth()->user()->id
+                "from_user" => auth()->user()->id,
+                "type" => 2
             ]);
             broadcast(new notificationSocket($notify, $order_status->transactions->user_id));
         } elseif ($request["type"] == 4) {
@@ -114,7 +117,8 @@ class OrderStatusController extends Controller
                 "body" => $request["message"],
                 "target_id" => $order_status->order_id,
                 "to_user" =>  $order_status->transactions->user_id,
-                "from_user" => auth()->user()->id
+                "from_user" => auth()->user()->id,
+                "type" => 2
             ]);
             broadcast(new notificationSocket($notify, $order_status->transactions->user_id));
         }
@@ -159,7 +163,8 @@ class OrderStatusController extends Controller
                 "title" => trans("message.notification.transactions.withdraw.accept"),
                 "target_id" => $order_status->order_id,
                 "to_user" =>  $order_status->transactions->user_id,
-                "from_user" => auth()->user()->id
+                "from_user" => auth()->user()->id,
+                "type" => 2
             ]);
             broadcast(new notificationSocket($notify, $order_status->transactions->user_id));
         } elseif ($request["type"] == 4) {
@@ -178,7 +183,8 @@ class OrderStatusController extends Controller
                 "body" => $request["message"],
                 "target_id" => $order_status->order_id,
                 "to_user" =>  $order_status->transactions->user_id,
-                "from_user" => auth()->user()->id
+                "from_user" => auth()->user()->id,
+                "type" => 2
             ]);
             broadcast(new notificationSocket($notify, $order_status->transactions->user_id));
         }
