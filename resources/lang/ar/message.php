@@ -30,7 +30,7 @@ return [
     'get.content.ticket' => 'تم جلب محتويات التذكرة المفتوحة بنجاح ',
     'get.open.tickets' => 'تم جلب التذاكر المفتوحة بنجاح ',
     'notifications.add.comment.ticket' => 'تم اضافة تعليق على تذكرة خاصة بك',
-    'notifications.close.ticket' => 'تم اغلاق التذكرة الخاصة بك',
+    'notifications.close.ticket' => 'تم تغيير حالة اتذكرة الخاصة بك',
     'add.comment' => 'تم ارسال تعليقك بنجاح',
     'error.close.ticket' => 'لايمكنك اغلاق تذكرة ليس لك',
     'delete.comment' => 'تم حذف التعليق بنجاح',

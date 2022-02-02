@@ -29,7 +29,7 @@ return [
     'get.content.ticket' => 'The contents of the open ticket have been successfully retrieved',
     'get.open.tickets' => 'Open tickets have been successfully received',
     'notifications.add.comment.ticket' => 'Comment has been added to your ticket',
-    'notifications.close.ticket' => 'Your ticket has been closed',
+    'notifications.close.ticket' => 'Your ticket status has changed',
     'add.comment' => 'Your comment has been sent successfully',
     'error.close.ticket' => 'You cannot close a ticket that is not yours',
     'delete.comment' => 'Comment removed successfully',
