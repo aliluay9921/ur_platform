@@ -112,7 +112,7 @@ class CardController extends Controller
         if ($validator->fails()) {
             return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
-        return $this->desEncrypt($request["serial"], "ali_luay");
+        $this->desEncrypt($request["serial"], "ali_luay");
         $serial = SerialKeyCard::create([
             "card_id" => $request["card_id"],
             "serial" => $this->desEncrypt($request["serial"], "ali_luay")
