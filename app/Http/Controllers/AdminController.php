@@ -133,7 +133,7 @@ class AdminController extends Controller
             $_GET['skip'] = 0;
         if (!isset($_GET['limit']))
             $_GET['limit'] = 10;
-        $res = $this->paging($users,  $_GET['skip'],  $_GET['limit']);
+        $res = $this->paging($users->orderBy("created_at", "DESC"),  $_GET['skip'],  $_GET['limit']);
         return $this->send_response(200, 'تم جلب ألمستخدمين بنجاح ', [], $res["model"], null, $res["count"]);
     }
     public function getOrderKeyTypes()
@@ -166,7 +166,7 @@ class AdminController extends Controller
             $_GET['skip'] = 0;
         if (!isset($_GET['limit']))
             $_GET['limit'] = 10;
-        $res = $this->paging($get,  $_GET['skip'],  $_GET['limit']);
+        $res = $this->paging($get->orderBy("created_at", "DESC"),  $_GET['skip'],  $_GET['limit']);
         return $this->send_response(200, 'تم جلب العنصر بنجاح', [], $res["model"], null, $res["count"]);
     }
 
