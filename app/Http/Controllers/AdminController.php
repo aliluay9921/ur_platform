@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Box;
 use App\Models\User;
+use App\Models\BoxLog;
 use App\Models\AdminLog;
+use App\Events\BoxSocket;
 use App\Traits\Pagination;
 use App\Models\OrderKeyType;
 use App\Traits\SendResponse;
@@ -15,7 +18,21 @@ use Illuminate\Support\Facades\Validator;
 class AdminController extends Controller
 {
     use SendResponse, Pagination;
-
+    public function getBox()
+    {
+        $box = Box::first();
+        return $this->send_response(200, 'تم جلب القاصة', [], $box);
+    }
+    public function getBoxLogs()
+    {
+        $box_logs = BoxLog::select("*");
+        if (!isset($_GET['skip']))
+            $_GET['skip'] = 0;
+        if (!isset($_GET['limit']))
+            $_GET['limit'] = 10;
+        $res = $this->paging($box_logs->orderBy("created_at", "DESC"),  $_GET['skip'],  $_GET['limit']);
+        return $this->send_response(200, 'تم جلب سجلات القاصة', [], $res["model"], null, $res["count"]);
+    }
     public function getNotifications()
     {
         $notifications = Notifications::where("to_user", auth()->user()->id)->where("seen", false);
@@ -167,5 +184,62 @@ class AdminController extends Controller
             "seen" => true
         ]);
         return $this->send_response(200, 'تم تعديل الحالة بنجاح', [], $notification);
+    }
+
+    public function withdrawBox(Request $request)
+    {
+        $request = $request->json()->all();
+        $validator = Validator::make($request, [
+            'value' => 'required',
+            'target' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return $this->send_response(400, 'يرجى ادخال قيمة السحب', [], $validator->errors());
+        }
+        $box = Box::first();
+
+        if ($request["target"] == "company_ratio") {
+
+            if ($request["value"] > $box->company_ratio) {
+                return $this->send_response(400, 'القيمة المدخلة اكبر من القيمة المتاحة', [], []);
+            } else {
+                $box->update([
+                    "company_ratio" => $box->company_ratio - $request["value"]
+                ]);
+                BoxLog::create([
+                    "text" => "تم عملية سحب مبلغ من رصيد الشركة",
+                    "user_id" => auth()->user()->id,
+                    "value" => $request["value"],
+                ]);
+            }
+        } else if ($request["target"] == "programmer_ratio") {
+            if ($request["value"] > $box->programmer_ratio) {
+                return $this->send_response(400, 'القيمة المدخلة اكبر من القيمة المتاحة', [], []);
+            } else {
+                $box->update([
+                    "programmer_ratio" => $box->programmer_ratio - $request["value"]
+                ]);
+                BoxLog::create([
+                    "text" => "تم عملية سحب مبلغ من رصيد المطور",
+                    "user_id" => auth()->user()->id,
+                    "value" => $request["value"],
+                ]);
+            }
+        } else {
+            if ($request["value"] > $box->managment_ratio) {
+                return $this->send_response(400, 'القيمة المدخلة اكبر من القيمة المتاحة', [], []);
+            } else {
+                $box->update([
+                    "managment_ratio" => $box->managment_ratio - $request["value"]
+                ]);
+                BoxLog::create([
+                    "text" => "تم عملية سحب مبلغ من رصيد الإدارة",
+                    "user_id" => auth()->user()->id,
+                    "value" => $request["value"],
+                ]);
+            }
+            broadcast(new BoxSocket($box));
+        }
+        return  $this->send_response(200, 'تم سحب المبلغ بنجاح', [], $box);
     }
 }

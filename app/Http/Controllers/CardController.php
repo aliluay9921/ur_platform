@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AdminLog;
 use App\Models\Box;
 use App\Models\Card;
-use App\Models\ChangeCurrncy;
+use App\Models\User;
 use App\Models\Company;
+use App\Models\AdminLog;
+use App\Events\BoxSocket;
 use App\Traits\Encryption;
 use App\Traits\Pagination;
 use App\Traits\UploadImage;
 use App\Traits\SendResponse;
 use Illuminate\Http\Request;
+use App\Models\ChangeCurrncy;
 use App\Models\joinRelations;
 use App\Models\SerialKeyCard;
-use App\Models\User;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
 
@@ -183,6 +184,7 @@ class CardController extends Controller
                 $change_currency = ChangeCurrncy::where("currency", $company_currency)->first();
                 $card_buy = $card->points / $change_currency->points;
                 $profit = $card_buy - $card->card_sale;
+
                 $box = Box::first();
                 $box->update([
                     "total_value" => $box->total_value + $profit,
@@ -190,6 +192,7 @@ class CardController extends Controller
                     "programmer_ratio" => $box->programmer_ratio + $profit * 0.3,
                     "managment_ratio" => $box->managment_ratio + $profit * 0.6
                 ]);
+                broadcast(new BoxSocket($box));
             } else {
                 return $this->send_response(400, trans("message.empty.cards"), [], []);
             }

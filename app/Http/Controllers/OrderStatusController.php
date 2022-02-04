@@ -173,7 +173,6 @@ class OrderStatusController extends Controller
                 "order_id" => $order_status->order_id,
                 "status_id" => $status->id,
                 "type" => $order_status->type,
-
             ];
             if (array_key_exists("message", $request)) {
                 $data["message"] = $request["message"];
@@ -201,7 +200,7 @@ class OrderStatusController extends Controller
             return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
         }
         $order_status = OrderStatus::find($request["order_status_id"]);
-        // return $order_status;
+
         if ($order_status->type == 0) {
             $new_order = $this->depositChangeState($order_status, $request);
         } elseif ($order_status->type == 1) {

@@ -78,12 +78,17 @@ Route::middleware(['cors'])->group(function () {
 
                 route::get("get_admin_logs", [AdminController::class, "getAdminLogs"]);
                 route::get("get_users", [AdminController::class, "getUsers"]);
+                route::get("get_box", [AdminController::class, "getBox"]);
+                route::get("get_box_logs", [AdminController::class, "getBoxLogs"]);
+
 
                 route::post("add_company", [CompanyController::class, "addCompany"]);
                 route::post("add_payment_method", [PaymentMethodsController::class, "addPaymentMethod"]);
                 route::post("add_card", [CardController::class, "addCard"]);
                 route::post("add_serial_card", [CardController::class, "addSerialCard"]);
                 route::post("add_currency", [ChangeCurrncyController::class, "addCurrency"]);
+
+                route::put("withdraw_box", [AdminController::class, "withdrawBox"]);
                 route::put("change_type_order_status", [OrderStatusController::class, "changeTypeOrderStatus"]);
                 route::put("edit_currency", [ChangeCurrncyController::class, "editCurrency"]);
                 route::put("edit_card", [CardController::class, "editCard"]);

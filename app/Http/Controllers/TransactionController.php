@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\BoxSocket;
 use App\Events\transactionsSocket;
 use App\Models\AdminLog;
+use App\Models\Box;
 use App\Models\Status;
 use App\Traits\Pagination;
 use App\Models\OrderStatus;
@@ -171,16 +173,21 @@ class TransactionController extends Controller
                     $company_tax = ($relations->payment_methods->company_tax  / 100);
                     $new_currecny_point = ceil($request["net_price"] / (1 - $system_tax - $company_tax));
                     $points = $new_currecny_point * $currency->points;
-
+                    error_log("" . $points);
                     if ($points == $request["value"]) {
                         if ($relations->companies->currncy_type == "points") {
                             // transaction point on user to another
                             $to_user = User::where("user_name", $request["target"])->first();
+
                             $from_user = User::find($user->id);
                             // if ($from_user->points)
-                            $to_user->update([
-                                "points" => $to_user->points + $request["value"]
-                            ]);
+                            if ($to_user) {
+                                $to_user->update([
+                                    "points" => $to_user->points + $request["value"]
+                                ]);
+                            } else {
+                                return $this->send_response(400, trans("message.error.withdraw.transactions.to.user"), [], []);
+                            }
                             $from_user->update([
                                 "points" => $from_user->points - $request["value"]
                             ]);
@@ -196,6 +203,18 @@ class TransactionController extends Controller
                                 "after_operation" => $from_user->points - $request["value"],
                                 "before_operation" => $from_user->points,
                             ]);
+                            // الية الربح من عملية تحويل نقاط
+                            $box = Box::first();
+                            $dollar = ChangeCurrncy::where("currency", "dollar")->first();
+                            $system__tax = $request["value"] * $payments->tax / 100;
+                            $profit = $system__tax / $dollar->points;
+                            $box->update([
+                                "total_value" => $box->total_value + $profit,
+                                "company_ratio" => $box->company_ratio + $profit * 0.1,
+                                "programmer_ratio" => $box->programmer_ratio + $profit * 0.3,
+                                "managment_ratio" => $box->managment_ratio + $profit * 0.6
+                            ]);
+                            broadcast(new BoxSocket($box));
                             return $this->send_response(200, trans("message.translate.points"), [], Transaction::find($transactions_points->id));
                         } else {
                             $withdraw = Transaction::create($data);
@@ -215,9 +234,6 @@ class TransactionController extends Controller
                             foreach ($admins as $admin) {
                                 broadcast(new transactionsSocket(AdminLog::with("transactions", "transactions.last_status")->find($admin_log->id), $admin));
                             }
-
-
-
                             return $this->send_response(200, trans("message.withdraw.review"), [], Transaction::find($withdraw->id));
                         }
                     } else {

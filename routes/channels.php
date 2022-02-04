@@ -46,3 +46,7 @@ Broadcast::channel("comment_socket.{ticket_id}", function ($ticket_id, $user) {
     // return true;
     return $ticket != null;
 });
+
+Broadcast::channel("box_socket", function () {
+    return true;
+});
