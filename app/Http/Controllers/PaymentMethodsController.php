@@ -57,7 +57,14 @@ class PaymentMethodsController extends Controller
                     continue;
                 } else {
                     $sort = $value == 'true' ? 'desc' : 'asc';
-                    $payments->orderBy($key,  $sort);
+                    if ($key == 'name_ar') {
+                        error_log($key);
+                        $payments->join("join_relations", "payment_methods.id", "=", "join_relations.payment_method_id")->select("payment_methods.*");
+                        $payments->join("companies", "join_relations.company_id", "=", "companies.id");
+                        $payments->orderBy('companies.name_ar', $sort);
+                    } else {
+                        $payments->orderBy($key, $sort);
+                    }
                 }
             }
         }
