@@ -17,7 +17,7 @@ class CreateCompaniesTable extends Migration
             $table->uuid("id")->primary();
             $table->string("name_ar");
             $table->string("name_en");
-            $table->string("currncy_type");
+            $table->string("currency_type");
             $table->boolean("active")->default(true);
             $table->timestamps();
         });

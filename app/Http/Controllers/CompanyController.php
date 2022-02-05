@@ -60,7 +60,7 @@ class CompanyController extends Controller
         $validator = Validator::make($request, [
             "name_ar" => "required",
             "name_en" => "required",
-            "currncy_type" => "required",
+            "currency_type" => "required",
             "images" => "required"
         ]);
         if ($validator->fails()) {
@@ -69,7 +69,7 @@ class CompanyController extends Controller
         $company = Company::create([
             "name_ar" => $request["name_ar"],
             "name_en" => $request["name_en"],
-            "currncy_type" => $request["currncy_type"],
+            "currency_type" => $request["currency_type"],
         ]);
         if (array_key_exists("images", $request)) {
             foreach ($request["images"] as $image) {
@@ -90,7 +90,7 @@ class CompanyController extends Controller
             "id" => "required|exists:companies,id",
             "name_ar" => "required",
             "name_en" => "required",
-            "currncy_type" => "required",
+            "currency_type" => "required",
         ]);
         if ($validator->fails()) {
             return $this->send_response(400, trans("message.error.key"), $validator->errors(), []);
@@ -99,7 +99,7 @@ class CompanyController extends Controller
         $data = [
             "name_ar" => $request["name_ar"],
             "name_en" => $request["name_en"],
-            "currncy_type" => $request["currncy_type"],
+            "currency_type" => $request["currency_type"],
         ];
 
         Company::find($request["id"])->update($data);
