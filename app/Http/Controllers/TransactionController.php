@@ -207,6 +207,9 @@ class TransactionController extends Controller
                                 "after_operation" => $from_user->points - $request["value"],
                                 "before_operation" => $from_user->points,
                             ]);
+                            $transactions_points->update([
+                                'last_order' => $order->id
+                            ]);
                             $notify =  Notifications::create([
                                 "title" => trans("message.received.points.to.user") . $transactions_points->user_id,
                                 "body" => $request["message"],
