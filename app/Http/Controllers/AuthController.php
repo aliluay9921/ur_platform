@@ -20,7 +20,7 @@ class AuthController extends Controller
 
     public function getTimeZone()
     {
-        return auth()->user()->time_zone;
+        return auth()->user()->time_zone . "Carbon" . Carbon::now();
     }
 
     public function random_code()
