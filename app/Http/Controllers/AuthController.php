@@ -17,6 +17,12 @@ class AuthController extends Controller
 {
     use SendResponse, Pagination;
 
+
+    public function getTimeZone()
+    {
+        return auth()->user()->time_zone;
+    }
+
     public function random_code()
     {
         $code = substr(str_shuffle("0123456789ABCD"), 0, 6);
