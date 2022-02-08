@@ -168,14 +168,14 @@ class TransactionController extends Controller
             if (is_int($request["net_price"])) {
                 if ($user->points >= $request["value"]) {
                     $relations = joinRelations::where("payment_method_id", $request["payment_method_id"])->first();
-                    $currency =  ChangeCurrncy::where("currency", $relations->companies->currncy_type)->first();
+                    $currency =  ChangeCurrncy::where("currency", $relations->companies->currency_type)->first();
                     $system_tax =  ($relations->payment_methods->tax / 100);
                     $company_tax = ($relations->payment_methods->company_tax  / 100);
                     $new_currecny_point = ceil($request["net_price"] / (1 - $system_tax - $company_tax));
                     $points = $new_currecny_point * $currency->points;
                     error_log("" . $points);
                     if ($points == $request["value"]) {
-                        if ($relations->companies->currncy_type == "points") {
+                        if ($relations->companies->currency_type == "points") {
                             // transaction point on user to another
                             $to_user = User::where("user_name", $request["target"])->first();
 
