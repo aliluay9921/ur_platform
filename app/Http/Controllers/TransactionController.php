@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\BoxSocket;
-use App\Events\transactionsSocket;
-use App\Models\AdminLog;
 use App\Models\Box;
+use App\Models\User;
 use App\Models\Status;
+use App\Models\AdminLog;
+use App\Events\BoxSocket;
 use App\Traits\Pagination;
 use App\Models\OrderStatus;
 use App\Models\Transaction;
@@ -16,7 +16,8 @@ use App\Models\ChangeCurrncy;
 use App\Models\joinRelations;
 use App\Models\Notifications;
 use App\Models\PaymentMethod;
-use App\Models\User;
+use App\Events\notificationSocket;
+use App\Events\transactionsSocket;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
@@ -195,6 +196,8 @@ class TransactionController extends Controller
                             AdminLog::create([
                                 "target_id" => $transactions_points->id
                             ]);
+                            Broadcast(new transactionsSocket($transactions_points, $transactions_points->user));
+
                             $status = Status::where("type", 2)->first();
                             $order =  OrderStatus::create([
                                 "order_id" => $transactions_points->id,
@@ -203,6 +206,15 @@ class TransactionController extends Controller
                                 "after_operation" => $from_user->points - $request["value"],
                                 "before_operation" => $from_user->points,
                             ]);
+                            $notify =  Notifications::create([
+                                "title" => trans("message.notification.transactions.withdraw.reject"),
+                                "body" => $request["message"],
+                                "target_id" => $order->id,
+                                "to_user" =>  $transactions_points->user_id,
+                                "from_user" => auth()->user()->id,
+                                "type" => 2
+                            ]);
+                            broadcast(new notificationSocket($notify, $transactions_points->user_id));
                             // الية الربح من عملية تحويل نقاط
                             $box = Box::first();
                             $dollar = ChangeCurrncy::where("currency", "dollar")->first();
