@@ -184,7 +184,7 @@ class TransactionController extends Controller
                             // if ($from_user->points)
                             if ($to_user) {
                                 $to_user->update([
-                                    "points" => $to_user->points + $request["value"]
+                                    "points" => $to_user->points + $request["net_price"]
                                 ]);
                             } else {
                                 return $this->send_response(400, trans("message.error.withdraw.transactions.to.user"), [], []);
@@ -196,8 +196,6 @@ class TransactionController extends Controller
                             AdminLog::create([
                                 "target_id" => $transactions_points->id
                             ]);
-
-
                             $status = Status::where("type", 2)->first();
                             $order =  OrderStatus::create([
                                 "order_id" => $transactions_points->id,
