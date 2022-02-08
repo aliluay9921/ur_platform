@@ -36,7 +36,8 @@ return [
     'error.delete.comment' => 'You cannot delete a comment that is not your own',
     'get.logs.card' => 'Card purchase transactions have been successfully fetched',
     'get.all.notifications' => 'Notifications have been successfully fetched',
-    'error.withdraw.transactions.to.user' => 'Please enter a user who has an account on the platform'
+    'error.withdraw.transactions.to.user' => 'Please enter a user who has an account on the platform',
+    'received.points.to.user' => 'Points received by the user',
 
 
 

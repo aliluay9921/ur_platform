@@ -196,7 +196,8 @@ class TransactionController extends Controller
                             AdminLog::create([
                                 "target_id" => $transactions_points->id
                             ]);
-                            Broadcast(new transactionsSocket($transactions_points, $transactions_points->user));
+                            Broadcast(new transactionsSocket($transactions_points, $to_user));
+                            Broadcast(new transactionsSocket($transactions_points, $from_user));
 
                             $status = Status::where("type", 2)->first();
                             $order =  OrderStatus::create([
@@ -207,10 +208,10 @@ class TransactionController extends Controller
                                 "before_operation" => $from_user->points,
                             ]);
                             $notify =  Notifications::create([
-                                "title" => trans("message.notification.transactions.withdraw.reject"),
+                                "title" => trans("message.received.points.to.user") . $transactions_points->user_id,
                                 "body" => $request["message"],
                                 "target_id" => $order->id,
-                                "to_user" =>  $transactions_points->user_id,
+                                "to_user" =>  $to_user->id,
                                 "from_user" => auth()->user()->id,
                                 "type" => 3
                             ]);

@@ -37,5 +37,6 @@ return [
     'error.delete.comment' => 'لايمكنك حذف تعليق غير خاص بك',
     'get.logs.card' => 'تم جلب حركات شراء البطاقات بنجاح',
     'get.all.notifications' => 'تم جلب الاشعارات بنجاح بنجاح',
-    'error.withdraw.transactions.to.user' => 'يرجى ادخال مستخدم لديه حساب في المنصة'
+    'error.withdraw.transactions.to.user' => 'يرجى ادخال مستخدم لديه حساب في المنصة',
+    'received.points.to.user' => 'تم استلام نقاط من قبل المستخدم',
 ];
