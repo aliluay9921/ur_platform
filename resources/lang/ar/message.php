@@ -39,4 +39,5 @@ return [
     'get.all.notifications' => 'تم جلب الاشعارات بنجاح بنجاح',
     'error.withdraw.transactions.to.user' => 'يرجى ادخال مستخدم لديه حساب في المنصة',
     'received.points.to.user' => 'تم استلام نقاط من قبل المستخدم',
+    'received.points.to.user.title' => 'تم استلام النقاط',
 ];

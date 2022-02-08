@@ -38,6 +38,7 @@ return [
     'get.all.notifications' => 'Notifications have been successfully fetched',
     'error.withdraw.transactions.to.user' => 'Please enter a user who has an account on the platform',
     'received.points.to.user' => 'Points received by the user',
+    'received.points.to.user.title' => 'Points received',
 
 
 
