@@ -37,7 +37,7 @@ class statusSeeder extends Seeder
         Status::create([
             "type" => 4,
             "status_ar" => "رفض ",
-            "status_en" => "reject ",
+            "status_en" => "rejected",
         ]);
     }
 }

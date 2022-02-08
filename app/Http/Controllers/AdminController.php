@@ -206,7 +206,7 @@ class AdminController extends Controller
                 $box->update([
                     "company_ratio" => $box->company_ratio - $request["value"]
                 ]);
-                BoxLog::create([
+                $log = BoxLog::create([
                     "text" => "تم عملية سحب مبلغ من رصيد الشركة",
                     "user_id" => auth()->user()->id,
                     "value" => $request["value"],
@@ -219,7 +219,7 @@ class AdminController extends Controller
                 $box->update([
                     "programmer_ratio" => $box->programmer_ratio - $request["value"]
                 ]);
-                BoxLog::create([
+                $log =  BoxLog::create([
                     "text" => "تم عملية سحب مبلغ من رصيد المطور",
                     "user_id" => auth()->user()->id,
                     "value" => $request["value"],
@@ -232,7 +232,7 @@ class AdminController extends Controller
                 $box->update([
                     "managment_ratio" => $box->managment_ratio - $request["value"]
                 ]);
-                BoxLog::create([
+                $log =  BoxLog::create([
                     "text" => "تم عملية سحب مبلغ من رصيد الإدارة",
                     "user_id" => auth()->user()->id,
                     "value" => $request["value"],
@@ -240,6 +240,6 @@ class AdminController extends Controller
             }
             broadcast(new BoxSocket($box));
         }
-        return  $this->send_response(200, 'تم سحب المبلغ بنجاح', [], $box);
+        return  $this->send_response(200, 'تم سحب المبلغ بنجاح', [], BoxLog::find($log->id));
     }
 }
