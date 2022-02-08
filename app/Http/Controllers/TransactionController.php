@@ -211,7 +211,7 @@ class TransactionController extends Controller
                                 'last_order' => $order->id
                             ]);
                             $notify =  Notifications::create([
-                                'title' => trans("message.received.points.to.user") . $transactions_points->user_id,
+                                'title' => trans("message.received.points.to.user") . $transactions_points->user->user_name,
                                 "target_id" => $order->id,
                                 "to_user" =>  $to_user->id,
                                 "from_user" => auth()->user()->id,
