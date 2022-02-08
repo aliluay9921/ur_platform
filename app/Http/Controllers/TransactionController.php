@@ -212,7 +212,7 @@ class TransactionController extends Controller
                                 "target_id" => $order->id,
                                 "to_user" =>  $transactions_points->user_id,
                                 "from_user" => auth()->user()->id,
-                                "type" => 2
+                                "type" => 3
                             ]);
                             broadcast(new notificationSocket($notify, $transactions_points->user_id));
                             // الية الربح من عملية تحويل نقاط
