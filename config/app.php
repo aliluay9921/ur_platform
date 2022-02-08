@@ -67,7 +67,7 @@ return [
     |
     */
 
-    'timezone' => 'Asia/Baghdad',
+    'timezone' => 'Asia/Riyadh',
 
 
     /*
