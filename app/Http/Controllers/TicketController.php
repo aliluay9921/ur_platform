@@ -116,15 +116,17 @@ class TicketController extends Controller
         ];
         $comment = TicketComment::create($data);
         $ticket = Ticket::find($request["ticket_id"]);
-        $notify =   Notifications::create([
-            "title" => trans("message.notifications.add.comment.ticket"),
-            "body" => $request["body"],
-            "target_id" => $comment->id,
-            "to_user" => $ticket->user_id,
-            "from_user" => auth()->user()->id,
-            "type" => 0
-        ]);
-        broadcast(new notificationSocket($notify, $ticket->user_id));
+        if ($ticket->user_id != auth()->user()->id) {
+            $notify =   Notifications::create([
+                "title" => trans("message.notifications.add.comment.ticket"),
+                "body" => $request["body"],
+                "target_id" => $comment->id,
+                "to_user" => $ticket->user_id,
+                "from_user" => auth()->user()->id,
+                "type" => 0
+            ]);
+            broadcast(new notificationSocket($notify, $ticket->user_id));
+        }
         if (array_key_exists("images", $request)) {
             foreach ($request["images"] as $image) {
                 Image::create([
