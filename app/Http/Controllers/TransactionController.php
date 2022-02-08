@@ -179,7 +179,6 @@ class TransactionController extends Controller
                         if ($relations->companies->currency_type == "points") {
                             // transaction point on user to another
                             $to_user = User::where("user_name", $request["target"])->first();
-
                             $from_user = User::find($user->id);
                             // if ($from_user->points)
                             if ($to_user) {
@@ -189,9 +188,7 @@ class TransactionController extends Controller
                             } else {
                                 return $this->send_response(400, trans("message.error.withdraw.transactions.to.user"), [], []);
                             }
-                            $from_user->update([
-                                "points" => $from_user->points - $request["value"]
-                            ]);
+
                             $transactions_points = Transaction::create($data);
                             AdminLog::create([
                                 "target_id" => $transactions_points->id
@@ -203,6 +200,9 @@ class TransactionController extends Controller
                                 "type" => 1,
                                 "after_operation" => $from_user->points - $request["value"],
                                 "before_operation" => $from_user->points,
+                            ]);
+                            $from_user->update([
+                                "points" => $from_user->points - $request["value"]
                             ]);
                             $transactions_points->update([
                                 'last_order' => $order->id
