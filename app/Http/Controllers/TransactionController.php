@@ -211,14 +211,14 @@ class TransactionController extends Controller
                                 'last_order' => $order->id
                             ]);
                             $notify =  Notifications::create([
-                                'title' => trans('received.points.to.user.title'),
+                                'title' => trans('message.received.points.to.user.title'),
                                 "body" => trans("message.received.points.to.user") . $transactions_points->user_id,
                                 "target_id" => $order->id,
                                 "to_user" =>  $to_user->id,
                                 "from_user" => auth()->user()->id,
                                 "type" => 3
                             ]);
-                            broadcast(new notificationSocket($notify, $transactions_points->user_id));
+                            broadcast(new notificationSocket($notify, $to_user->id));
                             // الية الربح من عملية تحويل نقاط
                             $box = Box::first();
                             $dollar = ChangeCurrncy::where("currency", "dollar")->first();
