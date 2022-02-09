@@ -19,6 +19,8 @@ class CreateCompaniesTable extends Migration
             $table->string("name_en");
             $table->string("currency_type");
             $table->boolean("active")->default(true);
+            $table->softDeletes();
+
             $table->timestamps();
         });
     }

@@ -18,6 +18,7 @@ class CreateUserCodesTable extends Migration
             $table->uuid("user_id");
             $table->string("code");
             $table->integer("type"); // 0 code of reset password , 1 code to activation email
+            $table->string("email")->nullable();
             $table->timestamps();
         });
     }

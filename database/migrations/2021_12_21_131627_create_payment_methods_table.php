@@ -21,6 +21,8 @@ class CreatePaymentMethodsTable extends Migration
             $table->double("tax");
             $table->double("company_tax")->nullable();
             $table->text("note")->nullable();
+            $table->softDeletes();
+            $table->boolean("active")->default(true);
             $table->timestamps();
         });
     }
