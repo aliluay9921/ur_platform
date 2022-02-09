@@ -173,6 +173,20 @@ class TransactionController extends Controller
                     $system_tax =  ($relations->payment_methods->tax / 100);
                     $company_tax = ($relations->payment_methods->company_tax  / 100);
                     $new_currecny_point = ceil($request["net_price"] / (1 - $system_tax - $company_tax));
+                    $profit = ($request["net_price"]) *  $system_tax;
+                    if ($currency->currency != "dollar") {
+                        $dollar = ChangeCurrncy::where("currency", "dollar")->first();
+                        $translate_currency = $profit * $currency->points;
+                        $profit = $translate_currency / $dollar->points;
+                    }
+                    $box = Box::first();
+                    $box->update([
+                        "total_value" => $box->total_value + $profit,
+                        "company_ratio" => $box->company_ratio + $profit * 0.1,
+                        "programmer_ratio" => $box->programmer_ratio + $profit * 0.3,
+                        "managment_ratio" => $box->managment_ratio + $profit * 0.6
+                    ]);
+                    broadcast(new BoxSocket($box));
                     $points = $new_currecny_point * $currency->points;
                     error_log("" . $points);
                     if ($points == $request["value"]) {
