@@ -15,18 +15,18 @@ class Box extends Model
 
     public function getTotalValueAttribute($value)
     {
-        return ceil($value);
+        return round($value, 2);
     }
     public function getCompanyRatioAttribute($value)
     {
-        return ceil($value);
+        return round($value, 2);
     }
     public function getProgrammerRatioAttribute($value)
     {
-        return ceil($value);
+        return round($value, 2);
     }
     public function getManagmentRatioAttribute($value)
     {
-        return ceil($value);
+        return round($value, 2);
     }
 }
