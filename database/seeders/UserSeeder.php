@@ -21,7 +21,8 @@ class UserSeeder extends Seeder
             "email" => "ur_admin@admin.com",
             "password" => bcrypt("ur_platform!@#"),
             "phone_number" => "07713982401",
-            "user_type" => 2
+            "user_type" => 2,
+            "active" => true
         ]);
         User::create([
             "first_name" => "ibrahim",
@@ -30,7 +31,8 @@ class UserSeeder extends Seeder
             "email" => "ibrahim_ayad@gmail.com",
             "password" => bcrypt("11111111"),
             "phone_number" => "07712345678",
-            "user_type" => 0
+            "user_type" => 0,
+            "active" => true
         ]);
     }
 }
