@@ -16,9 +16,9 @@ class DatabaseSeeder extends Seeder
         // \App\Models\User::factory(10)->create();
         $this->call(UserSeeder::class);
         $this->call(orderKeyTypeSeeder::class);
-        $this->call(PaymentMethodsSeeder::class);
-        $this->call(CompaniesSeeder::class);
-        $this->call(cardsSeeder::class);
+        // $this->call(PaymentMethodsSeeder::class);
+        // $this->call(CompaniesSeeder::class);
+        // $this->call(cardsSeeder::class);
         $this->call(CountriesSeeder::class);
         $this->call(statusSeeder::class);
         $this->call(boxSeeder::class);

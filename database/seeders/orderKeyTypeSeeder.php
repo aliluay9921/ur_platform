@@ -26,5 +26,9 @@ class orderKeyTypeSeeder extends Seeder
             "name_en" => "Phone number",
             "name_ar" => "رقم الهاتف"
         ]);
+        OrderKeyType::create([
+            "name_en" => "user_name",
+            "name_ar" => "اسم المستخدم"
+        ]);
     }
 }
