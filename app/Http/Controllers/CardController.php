@@ -180,7 +180,7 @@ class CardController extends Controller
                     "target_id" => $card->id
                 ]);
                 // الية تقسيم الارباح من عملية شراء الكارتات
-                $company_currency = $card->join_relations[0]->companies->currncy_type;
+                $company_currency = $card->join_relations[0]->companies->currency_type;
                 $change_currency = ChangeCurrncy::where("currency", $company_currency)->first();
                 $card_buy = $card->points / $change_currency->points;
                 $profit = $card_buy - $card->card_sale;
