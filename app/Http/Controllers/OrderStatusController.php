@@ -68,7 +68,7 @@ class OrderStatusController extends Controller
         } elseif ($request["type"] == 3) {
             $status = Status::where("type", 3)->first();
             $relations = joinRelations::where("payment_method_id", $order_status->transactions->payment_method_id)->first();
-            $currency = ChangeCurrncy::where("currency", $relations->companies->currncy_type)->first();
+            $currency = ChangeCurrncy::where("currency", $relations->companies->currency_type)->first();
             $new_points = $request["value"] * $currency->points;
 
             $data = [
