@@ -73,9 +73,6 @@ Route::middleware(['cors'])->group(function () {
             route::put("close_ticket", [TicketController::class, "closeTicket"]);
             route::put("update_auth_user", [AuthController::class, "updateAuthUser"]);
             route::put("seen_notification", [AdminController::class, "seenNotification"]);
-
-
-
             route::get("get_time_zone", [AuthController::class, "getTimeZone"]);
 
 
