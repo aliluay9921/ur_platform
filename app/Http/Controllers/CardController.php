@@ -30,7 +30,9 @@ class CardController extends Controller
             $q->whereHas("companies", function ($query) {
                 $query->where("active", 1);
             });
-        })->withCount("serial_keys");
+        })->withCount(["serial_keys" => function ($q) {
+            $q->where('used', 0)->where('user_id', null);
+        }]);
         if (isset($_GET['filter'])) {
             $filter = json_decode($_GET['filter']);
             if ($filter->name == "companies") {
