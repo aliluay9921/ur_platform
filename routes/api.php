@@ -34,17 +34,9 @@ Route::middleware(['cors'])->group(function () {
     Route::post('forget_password', [AuthController::class, 'forgetPassword']); //->middleware('throttle:1,3');
     route::get("get_countries", [AuthController::class, "getCountries"]);
 
-
-
-
     Route::middleware(['auth:api', 'restrict', 'localization'])->group(function () {
         // Broadcast::routes();
         Broadcast::routes(['middleware' => ['auth:api']]);
-
-
-
-
-
         route::get("info_auth", [AuthController::class, "infoAuth"]);
         route::put("activation_account", [AuthController::class, "activationAccount"]);
 
