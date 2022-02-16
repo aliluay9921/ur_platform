@@ -16,7 +16,7 @@ class AppServiceProvider extends ServiceProvider
     {
         if ($this->app->isLocal()) {
             //if local register your services you require for development
-            $this->app->register('Barryvdh\Debugbar\ServiceProvider');
+            $this->app->register('app\providers\ServiceProvider');
         } else {
             //else register your services you require for production
             $this->app['request']->server->set('HTTPS', true);
