@@ -14,13 +14,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        if ($this->app->isLocal()) {
-            //if local register your services you require for development
-            $this->app->register('app\providers\ServiceProvider');
-        } else {
-            //else register your services you require for production
-            $this->app['request']->server->set('HTTPS', true);
-        }
+
+        $this->app['request']->server->set('HTTPS', true);
     }
 
     /**
