@@ -26,6 +26,10 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
+route::get("info", function () {
+
+    return auth()->user();
+});
 
 Route::middleware(['cors'])->group(function () {
 
