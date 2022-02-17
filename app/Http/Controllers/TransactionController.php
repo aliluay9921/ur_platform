@@ -221,11 +221,8 @@ class TransactionController extends Controller
                             // الية الربح من عملية تحويل نقاط
                             $box = Box::first();
                             $dollar = ChangeCurrncy::where("currency", "dollar")->first();
-                            $system__tax = $request["value"] * $payments->tax / 100;
-                            error_log("" . $system__tax);
+                            $system__tax = ceil($request["value"] * $payments->tax / 100);
                             $profit = $system__tax / $dollar->points;
-                            error_log("" . $profit);
-                            error_log("total=  " . $box->total_value . "  profit=" . $profit);
                             $box->update([
                                 "total_value" => $box->total_value + $profit,
                                 "company_ratio" => $box->company_ratio + $profit * 0.1,
