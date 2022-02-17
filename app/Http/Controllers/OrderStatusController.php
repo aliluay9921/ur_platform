@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\notificationSocket;
-use App\Events\transactionsSocket;
+use App\Models\Box;
 use App\Models\User;
 use App\Models\Status;
 use App\Models\Company;
 use App\Models\Deposit;
 use App\Models\AdminLog;
+use App\Events\BoxSocket;
 use App\Traits\Pagination;
 use App\Models\OrderStatus;
 use App\Models\Transaction;
@@ -17,6 +17,9 @@ use Illuminate\Http\Request;
 use App\Models\ChangeCurrncy;
 use App\Models\joinRelations;
 use App\Models\Notifications;
+use App\Models\PaymentMethod;
+use App\Events\notificationSocket;
+use App\Events\transactionsSocket;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Validator;
 
@@ -166,6 +169,24 @@ class OrderStatusController extends Controller
                 "from_user" => auth()->user()->id,
                 "type" => 2
             ]);
+
+            $relations = joinRelations::where("payment_method_id", $order_status->transactions->payment_method_id)->first();
+            $currency =  ChangeCurrncy::where("currency", $relations->companies->currency_type)->first();
+            $system_tax =  ($relations->payment_methods->tax / 100);
+            $profit = $order_status->transactions->net_price *  $system_tax;
+            if ($currency->currency != "dollar") {
+                $dollar = ChangeCurrncy::where("currency", "dollar")->first();
+                $translate_currency = $profit * $currency->points;
+                $profit = $translate_currency / $dollar->points;
+            }
+            $box = Box::first();
+            $box->update([
+                "total_value" => $box->total_value + $profit,
+                "company_ratio" => $box->company_ratio + $profit * 0.1,
+                "programmer_ratio" => $box->programmer_ratio + $profit * 0.3,
+                "managment_ratio" => $box->managment_ratio + $profit * 0.6
+            ]);
+            broadcast(new BoxSocket($box));
             broadcast(new notificationSocket($notify, $order_status->transactions->user_id));
         } elseif ($request["type"] == 4) {
             $status = Status::where("type", 4)->first();

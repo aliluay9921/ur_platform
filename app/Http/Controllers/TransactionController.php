@@ -173,20 +173,7 @@ class TransactionController extends Controller
                     $system_tax =  ($relations->payment_methods->tax / 100);
                     $company_tax = ($relations->payment_methods->company_tax  / 100);
                     $new_currecny_point = ceil($request["net_price"] / (1 - $system_tax - $company_tax));
-                    $profit = ($request["net_price"]) *  $system_tax;
-                    if ($currency->currency != "dollar") {
-                        $dollar = ChangeCurrncy::where("currency", "dollar")->first();
-                        $translate_currency = $profit * $currency->points;
-                        $profit = $translate_currency / $dollar->points;
-                    }
-                    $box = Box::first();
-                    $box->update([
-                        "total_value" => $box->total_value + $profit,
-                        "company_ratio" => $box->company_ratio + $profit * 0.1,
-                        "programmer_ratio" => $box->programmer_ratio + $profit * 0.3,
-                        "managment_ratio" => $box->managment_ratio + $profit * 0.6
-                    ]);
-                    broadcast(new BoxSocket($box));
+
                     $points = $new_currecny_point * $currency->points;
                     error_log("" . $points);
                     if ($points == $request["value"]) {
@@ -235,7 +222,10 @@ class TransactionController extends Controller
                             $box = Box::first();
                             $dollar = ChangeCurrncy::where("currency", "dollar")->first();
                             $system__tax = $request["value"] * $payments->tax / 100;
+                            error_log("" . $system__tax);
                             $profit = $system__tax / $dollar->points;
+                            error_log("" . $profit);
+                            error_log("total=  " . $box->total_value . "  profit=" . $profit);
                             $box->update([
                                 "total_value" => $box->total_value + $profit,
                                 "company_ratio" => $box->company_ratio + $profit * 0.1,
@@ -262,6 +252,20 @@ class TransactionController extends Controller
                             foreach ($admins as $admin) {
                                 broadcast(new transactionsSocket(AdminLog::with("transactions", "transactions.last_status")->find($admin_log->id), $admin));
                             }
+                            // $profit = ($request["net_price"]) *  $system_tax;
+                            // if ($currency->currency != "dollar") {
+                            //     $dollar = ChangeCurrncy::where("currency", "dollar")->first();
+                            //     $translate_currency = $profit * $currency->points;
+                            //     $profit = $translate_currency / $dollar->points;
+                            // }
+                            // $box = Box::first();
+                            // $box->update([
+                            //     "total_value" => $box->total_value + $profit,
+                            //     "company_ratio" => $box->company_ratio + $profit * 0.1,
+                            //     "programmer_ratio" => $box->programmer_ratio + $profit * 0.3,
+                            //     "managment_ratio" => $box->managment_ratio + $profit * 0.6
+                            // ]);
+                            // broadcast(new BoxSocket($box));
                             return $this->send_response(200, trans("message.withdraw.review"), [], Transaction::find($withdraw->id));
                         }
                     } else {
