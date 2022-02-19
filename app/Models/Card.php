@@ -28,8 +28,12 @@ class Card extends Model
     public function getPointsAttribute()
     {
         $relations = joinRelations::where("card_id", $this->id)->first();
-        $cuurency = $relations->companies->currency_type;
-        $change_currency = ChangeCurrncy::where("currency", $cuurency)->first();
-        return  $change_currency->points * $this->card_buy;
+        if ($relations) {
+            $cuurency = $relations->companies->currency_type;
+            $change_currency = ChangeCurrncy::where("currency", $cuurency)->first();
+            return  $change_currency->points * $this->card_buy;
+        } else {
+            return 0;
+        }
     }
 }
