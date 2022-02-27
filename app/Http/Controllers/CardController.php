@@ -72,7 +72,7 @@ class CardController extends Controller
             $_GET['skip'] = 0;
         if (!isset($_GET['limit']))
             $_GET['limit'] = 10;
-        $res = $this->paging($cards,  $_GET['skip'],  $_GET['limit']);
+        $res = $this->paging($cards->orderBy("value", "ASC"),  $_GET['skip'],  $_GET['limit']);
         return $this->send_response(200, trans("message.get.cards"), [], $res["model"], null, $res["count"]);
     }
 
